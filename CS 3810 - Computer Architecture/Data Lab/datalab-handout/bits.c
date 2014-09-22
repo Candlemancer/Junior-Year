@@ -1,9 +1,15 @@
-/* 
- * CS:APP Data Lab 
- * 
+/*
+ * CS:APP Data Lab
+ *
  * Jonathan Petersen
  * A01236750
- * 
+ *
+ * NOTE: Many of these solutions were designed in part using the tricks
+ *       available at http://graphics.stanford.edu/~seander/bithacks.html
+ *       and http://aggregate.org/MAGIC/. With that said, I affirm that
+ *       all of the work in this document is my own creation unless stated
+ *       otherwise.
+ *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -11,7 +17,7 @@
  * compiler. You can still use printf for debugging without including
  * <stdio.h>, although you might get a compiler warning. In general,
  * it's not good practice to ignore compiler warnings, but in this
- * case it's OK.  
+ * case it's OK.
  */
 
 #if 0
@@ -25,11 +31,11 @@ You will provide your solution to the Data Lab by
 editing the collection of functions in this source file.
 
 INTEGER CODING RULES:
- 
+
   Replace the "return" statement in each function with one
-  or more lines of C code that implements the function. Your code 
+  or more lines of C code that implements the function. Your code
   must conform to the following style:
- 
+
   int Funct(arg1, arg2, ...) {
       /* brief description of how your implementation works */
       int var1 = Expr1;
@@ -48,7 +54,7 @@ INTEGER CODING RULES:
   2. Function arguments and local variables (no global variables).
   3. Unary integer operations ! ~
   4. Binary integer operations & ^ | + << >>
-    
+
   Some of the problems restrict the set of allowed operators even further.
   Each "Expr" may consist of multiple operators. You are not restricted to
   one operator per line.
@@ -63,7 +69,7 @@ INTEGER CODING RULES:
   7. Use any data type other than int.  This implies that you
      cannot use arrays, structs, or unions.
 
- 
+
   You may assume that your machine:
   1. Uses 2s complement, 32-bit representations of integers.
   2. Performs right shifts arithmetically.
@@ -107,26 +113,26 @@ You are expressly forbidden to:
 
 
 NOTES:
-  1. Use the dlc (data lab checker) compiler (described in the handout) to 
+  1. Use the dlc (data lab checker) compiler (described in the handout) to
      check the legality of your solutions.
   2. Each function has a maximum number of operators (! ~ & ^ | + << >>)
-     that you are allowed to use for your implementation of the function. 
-     The max operator count is checked by dlc. Note that '=' is not 
+     that you are allowed to use for your implementation of the function.
+     The max operator count is checked by dlc. Note that '=' is not
      counted; you may use as many of these as you want without penalty.
   3. Use the btest test harness to check your functions for correctness.
   4. Use the BDD checker to formally verify your functions
   5. The maximum number of ops for each function is given in the
-     header comment for each function. If there are any inconsistencies 
+     header comment for each function. If there are any inconsistencies
      between the maximum ops in the writeup and in this file, consider
      this file the authoritative source.
 
 /*
  * STEP 2: Modify the following functions according the coding rules.
- * 
+ *
  *   IMPORTANT. TO AVOID GRADING SURPRISES:
  *   1. Use the dlc compiler to check that your solutions conform
  *      to the coding rules.
- *   2. Use the BDD checker to formally verify that your solutions produce 
+ *   2. Use the BDD checker to formally verify that your solutions produce
  *      the correct answers.
  */
 
@@ -165,8 +171,8 @@ NOTES:
    Unicode 6.0.  */
 /* We do not support C11 <threads.h>.  */
    #include <float.h>
-/* 
- * bitAnd - x&y using only ~ and | 
+/*
+ * bitAnd - x&y using only ~ and |
  *   Example: bitAnd(6, 5) = 4
  *   Legal ops: ~ |
  *   Max ops: 8
@@ -175,10 +181,10 @@ NOTES:
 int bitAnd(int x, int y) {
 
   // Uses DeMorgan's law: x & y = ~(~x | ~y)
-  
+
   return ~(~x | ~y);
 }
-/* 
+/*
  * getByte - Extract byte n from word x
  *   Bytes numbered from 0 (LSB) to 3 (MSB)
  *   Examples: getByte(0x12345678,1) = 0x56
@@ -188,7 +194,7 @@ int bitAnd(int x, int y) {
  */
 int getByte(int x, int n) {
 
-  // This function rightshifts x by n bits, then truncates 
+  // This function rightshifts x by n bits, then truncates
   // all but the lowest bit. (x << 3) transforms n into a number
   // of bytes instead of bits.
 
@@ -196,19 +202,19 @@ int getByte(int x, int n) {
   x = x >> numBits;
   return (x & 0xFF);
 }
-/* 
+/*
  * logicalShift - shift x to the right by n, using a logical shift
  *   Can assume that 0 <= n <= 31
  *   Examples: logicalShift(0x87654321,4) = 0x08765432
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 20
- *   Rating: 3 
+ *   Rating: 3
  */
 int logicalShift(int x, int n) {
 
   // This function creates a mask of length n bits
   // and uses it to erase the leading bits gained
-  // by an arithmatic shift. 
+  // by an arithmatic shift.
 
   // Note: I got some help on this one. http://stackoverflow.com/a/16981120
 
@@ -231,7 +237,7 @@ int logicalShift(int x, int n) {
 int bitCount(int x) {
 
   // This method for counting bits uses a sieve to accumulate
-  // the number of one bits in a 32-bit integer. 
+  // the number of one bits in a 32-bit integer.
 
   int mask1 = 0x55;
   int mask2 = 0x33;
@@ -252,12 +258,12 @@ int bitCount(int x) {
 
   return (x & 0x3f);
 }
-/* 
+/*
  * bang - Compute !x without using !
  *   Examples: bang(3) = 0, bang(0) = 1
  *   Legal ops: ~ & ^ | + << >>
  *   Max ops: 12
- *   Rating: 4 
+ *   Rating: 4
  */
 int bang(int x) {
 
@@ -273,8 +279,8 @@ int bang(int x) {
 
   return x;
 }
-/* 
- * tmin - return minimum two's complement integer 
+/*
+ * tmin - return minimum two's complement integer
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 4
  *   Rating: 1
@@ -285,8 +291,8 @@ int tmin(void) {
 
   return 1 << 31;
 }
-/* 
- * fitsBits - return 1 if x can be represented as an 
+/*
+ * fitsBits - return 1 if x can be represented as an
  *  n-bit, two's complement integer.
  *   1 <= n <= 32
  *   Examples: fitsBits(5,3) = 0, fitsBits(-4,3) = 1
@@ -296,9 +302,9 @@ int tmin(void) {
  */
 int fitsBits(int x, int n) {
 
-  // Shifts by a mask of size n bits, then XOR's with the 
+  // Shifts by a mask of size n bits, then XOR's with the
   // sign bit to flip the bits if negative. The bit flipping
-  // checks for abs(x) - 1 when x is negative, which mostly 
+  // checks for abs(x) - 1 when x is negative, which mostly
   // handles MIN_INT.
 
   int numBits = n + ~0;
@@ -306,7 +312,7 @@ int fitsBits(int x, int n) {
 
   return !((x >> numBits) ^ (sign));
 }
-/* 
+/*
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
  *  Round toward zero
  *   Examples: divpwr2(15,1) = 7, divpwr2(-33,4) = -2
@@ -317,7 +323,7 @@ int fitsBits(int x, int n) {
 int divpwr2(int x, int n) {
 
   // Shifts x by n bits to divide by a power of two,
-  // then adds an additional fractional component if 
+  // then adds an additional fractional component if
   // x is negative to add one to the result.
 
   int isNegative = (x >> 31);
@@ -325,8 +331,8 @@ int divpwr2(int x, int n) {
 
   return ((x + rounding)>> n);
 }
-/* 
- * negate - return -x 
+/*
+ * negate - return -x
  *   Example: negate(1) = -1.
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 5
@@ -338,8 +344,8 @@ int negate(int x) {
 
   return ~x + 1;
 }
-/* 
- * isPositive - return 1 if x > 0, return 0 otherwise 
+/*
+ * isPositive - return 1 if x > 0, return 0 otherwise
  *   Example: isPositive(-1) = 0.
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 8
@@ -360,8 +366,8 @@ int isPositive(int x) {
 
   return x;
 }
-/* 
- * isLessOrEqual - if x <= y  then return 1, else return 0 
+/*
+ * isLessOrEqual - if x <= y  then return 1, else return 0
  *   Example: isLessOrEqual(4,5) = 1.
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 24
@@ -428,7 +434,7 @@ int ilog2(int x) {
 
   return (x & 0x3f);
 }
-/* 
+/*
  * float_neg - Return bit-level equivalent of expression -f for
  *   floating point argument f.
  *   Both the argument and result are passed as unsigned int's, but
@@ -442,7 +448,7 @@ int ilog2(int x) {
 unsigned float_neg(unsigned uf) {
 
   // This function will return a float with the sign bit toggled.
-  // If the input is NaN, it returns NaN. It checks for NaN by 
+  // If the input is NaN, it returns NaN. It checks for NaN by
   // discarding the sign bit and checking if the the exponent bits
   // are all set and the mantissa is greater than zero.
 
@@ -458,7 +464,7 @@ unsigned float_neg(unsigned uf) {
   // Flip the sign bit and return.
   return (uf ^ 0x80000000);
 }
-/* 
+/*
  * float_i2f - Return bit-level equivalent of expression (float) x
  *   Result is returned as unsigned int, but
  *   it is to be interpreted as the bit-level representation of a
@@ -470,9 +476,9 @@ unsigned float_neg(unsigned uf) {
 unsigned float_i2f(int x) {
 
   // This function is a thing. After dealing with error cases, it records the
-  // sign bit and insures the value of the int is positive. Then it moves the 
+  // sign bit and insures the value of the int is positive. Then it moves the
   // most significant one to the higest bit location to calculate how large
-  // the exponent should be. The remaining value is then divided down into a 
+  // the exponent should be. The remaining value is then divided down into a
   // mantissa, and the result is then rounded appropriately.
 
   // Note: Adapted from a solution at http://pastie.org/pasties/6001301
@@ -495,14 +501,14 @@ unsigned float_i2f(int x) {
     f = -x;
   }
 
-  // Bring the most significant 1 to the high bit, 
+  // Bring the most significant 1 to the high bit,
   // adjusting the exponent for each shift.
   while ((f & 0x80000000) == 0) {
     f = f << 1;
     exponent = exponent - 1;
   }
   mantissa = f << 1;
-  
+
   // Setup the rounding scheme and move things to their proper place.
   guardBit = (mantissa & 0x00000200) >> 9;
   roundBit = (mantissa & 0x000001FF);
@@ -513,14 +519,14 @@ unsigned float_i2f(int x) {
   f = signMask | exponent | mantissa;
 
   //Adjust answer if you need to round.
-  if (roundBit  > 0x00000100 || 
+  if (roundBit  > 0x00000100 ||
      (roundBit == 0x00000100 && guardBit)) {
     f = signMask + (exponent + mantissa + 1);
   }
 
   return f;
 }
-/* 
+/*
  * float_twice - Return bit-level equivalent of expression 2*f for
  *   floating point argument f.
  *   Both the argument and result are passed as unsigned int's, but
@@ -532,10 +538,10 @@ unsigned float_i2f(int x) {
  *   Rating: 4
  */
 unsigned float_twice(unsigned uf) {
-  
+
   // This function separates a float into its component bit segments,
-  // then it adds one to the exponent, effectively multiplying the 
-  // float by two. If there is no exponent, it simply multiplies the 
+  // then it adds one to the exponent, effectively multiplying the
+  // float by two. If there is no exponent, it simply multiplies the
   // mantissa by two.
 
   unsigned int signMask = 0;
