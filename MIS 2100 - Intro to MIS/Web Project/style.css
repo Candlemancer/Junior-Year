@@ -1,0 +1,48 @@
+#header-card {
+	width: 768px;
+	margin: auto;
+}
+
+#photo {
+	width: 200px;
+	height: 200px;
+	float: left;
+	background: red;
+	margin: 15px;
+}
+
+#info-card {
+	width: 500px;
+	display: inline-block;
+}
+
+#navigation-bar {
+	width: 768px;
+	/*background: #909090;*/
+	margin: auto;
+	text-align: center;
+	float: none;
+}
+
+#navigation-bar li {
+	/*background: #F0F0F0;*/
+	display: inline;
+	margin: 5px 30px;
+}
+
+#photo-grandpa {
+	width: 200px;
+	float: left;
+	text-align: center;
+	color: gray;
+	margin: 10px 20px;
+}
+
+.content-body {
+	width: 768px;
+	margin: auto;
+}
+
+.parallax-background-image img{
+	width: 100%;
+}
