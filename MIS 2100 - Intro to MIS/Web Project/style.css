@@ -1,19 +1,39 @@
 #header-card {
-	width: 768px;
+	width: 1080px;
 	margin: auto;
+	padding-top: 50px;
+	font-size: 28px;
+	padding: 0px;
+}
+
+#header-card h1 {
+	text-align: center;
+	font-size: 80px;
+	width: 768px;
+	margin: 0 auto;
+	padding: 25px 0px;
 }
 
 #photo {
-	width: 200px;
-	height: 200px;
+	width: 260px;
+	height: 355px;
 	float: left;
-	background: red;
-	margin: 15px;
+	/*background: red;*/
+	margin: 2px;
+	margin-left: 40px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: white;
 }
 
 #info-card {
-	width: 500px;
+	width: 750px;
 	display: inline-block;
+}
+
+#info-card td {
+	/*background-color: red;*/
+	padding: 10px 20px;
 }
 
 #navigation-bar {
@@ -21,6 +41,7 @@
 	/*background: #909090;*/
 	margin: auto;
 	text-align: center;
+	font-size: 36px;
 	float: none;
 }
 
@@ -34,8 +55,9 @@
 	width: 200px;
 	float: left;
 	text-align: center;
-	color: gray;
+	color: #CCCCCC;
 	margin: 10px 20px;
+	font-size: 18px;
 }
 
 .content-body {
@@ -45,4 +67,19 @@
 
 .parallax-background-image img{
 	width: 100%;
+}
+
+body {
+	width: 1080px;
+	background-color: #666666;
+	margin: auto;
+	font-size: 28px;
+}
+
+html {
+	background-color: white;
+}
+
+a {
+	color: inherit;
 }
