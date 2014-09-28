@@ -216,7 +216,7 @@ int logicalShift(int x, int n) {
   // and uses it to erase the leading bits gained
   // by an arithmatic shift.
 
-  // Note: I got some help on this one. http://stackoverflow.com/a/16981120
+  // Note: I had read this Stack Overflow answer. http://stackoverflow.com/a/16981120
 
   int mask = 1;
 
@@ -481,7 +481,9 @@ unsigned float_i2f(int x) {
   // the exponent should be. The remaining value is then divided down into a
   // mantissa, and the result is then rounded appropriately.
 
-  // Note: Adapted from a solution at http://pastie.org/pasties/6001301
+  // Note: This problem did not specify the rounding mode, and I was unaware that C++ implements a
+  // round-to-even solution, so I did look at and test the solution at
+  // https://pastie.org/pasties/6001301 before finishing the rounding portion of this problem.
 
   unsigned int f = x;
   unsigned int signMask = 0;
