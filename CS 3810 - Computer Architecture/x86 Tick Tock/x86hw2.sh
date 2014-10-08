@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "Jacob Christensen"
-NUMBER=0
-STAGE1=0
-STAGE2=0
-STAGE3=0
+echo "Jonathan Petersen"
+NUMBER=33
+STAGE1=33
+STAGE2=32
+STAGE3="AprilInSeptember"
 
 ./tickTock $NUMBER $STAGE1 $STAGE2 $STAGE3
