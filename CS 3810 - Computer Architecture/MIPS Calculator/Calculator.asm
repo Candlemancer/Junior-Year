@@ -1,3 +1,9 @@
+# Jonathan Petersen
+# A01236750
+# MIPS Calculator Assignment
+# Use the Stack to pass arguments
+
+
 .data
 
 equationPrompt:		.asciiz		"Equation: "
@@ -85,6 +91,10 @@ parseLoop:
 	beq	$t0	0x2A	op		# *
 	beq	$t0	0x2F	op		# /
 	beq	$t0	0x21	op		# !
+	beq	$t0	0x51	endLoop		# Q
+	beq	$t0	0x71	endLoop		# q
+	beq	$t0	0x45	endLoop		# E
+	beq	$t0	0x65	endLoop		# e
 	blt	$t0	0x30	endParse	# Error low
 	bgt	$t0	0x39	endParse	# Error high
 
@@ -162,8 +172,13 @@ division:
 	lw	$t0	0($sp)
 	lw	$t1	8($sp)
 
+	beq	$t1	0	divisionByZero
 	div	$v0	$t0	$t1
 
+	jr	$ra
+	
+divisionByZero:
+	li	$v0	0
 	jr	$ra
 ###############################
 
