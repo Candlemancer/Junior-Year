@@ -9,7 +9,7 @@
 equationPrompt:		.asciiz		"Equation: "
 answerPrompt:		.asciiz		"Answer: "
 inputString:		.space		16
-endl:			.asciiz		"\n"
+endl:				.asciiz		"\n"
 
 
 .text
@@ -50,12 +50,12 @@ endSwitch:
 	li	$v0	1
 	move 	$a0	$t0
 	syscall
-	
+
 # Print an endl
 	li	$v0	4
 	la	$a0	endl
 	syscall
-	
+
 	j	runLoop
 endLoop:
 
@@ -132,9 +132,9 @@ endParse:
 addition:
 	lw	$t0	0($sp)
 	lw	$t1	8($sp)
-	
+
 	add	$v0	$t0	$t1
-	
+
 	jr	$ra
 ###############################
 
@@ -144,7 +144,7 @@ addition:
 ###############################
 subtraction:
 	lw	$t0	0($sp)
-	lw	$t1	8($sp)	
+	lw	$t1	8($sp)
 
 	sub	$v0	$t0	$t1
 
@@ -176,7 +176,7 @@ division:
 	div	$v0	$t0	$t1
 
 	jr	$ra
-	
+
 divisionByZero:
 	li	$v0	0
 	jr	$ra
@@ -190,9 +190,9 @@ factorial:
 	# Load the value
 	lw	$t0	0($sp)
 	subi	$t1	$t0	1
-	
+
 	beq	$t1	1	endRecursion
-	
+
 	sub	$sp	$sp	12
 	sw	$t1	0($sp)
 	sw	$ra	4($sp)
@@ -204,7 +204,7 @@ endRecursion:
 	lw	$ra	4($sp)
 	lw	$v1	0($sp)
 	mul	$v0	$v0	$v1
-	
+
 	addi	$sp	$sp	12
 	sw	$v0	0($sp)
 
