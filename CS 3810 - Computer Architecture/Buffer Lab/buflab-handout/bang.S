@@ -1,3 +1,4 @@
+jmp		55683708
 push 	$0x08048C7D
-movl	$0x65c76335,	%eax
+movl	$0x55683730,	%ebx
 ret
