@@ -1,0 +1,282 @@
+Jonathan Petersen
+A01236750
+
+Homework 8
+
+
+Chapter 4.2
+
+1.  Project the vector b onto the line through a. Check that e is perpendicular to a.
+ a. (a a^T) / (a^T a) b
+
+    ([ 1, 1, 1 ][ 1 1 1] / [ 1 1 1 ][ 1, 1, 1 ])([ 1, 2, 2 ])
+
+        [  1  1  1 ][  1 ]
+    1/3 [  1  1  1 ][  2 ]
+        [  1  1  1 ][  2 ]
+
+    1/3 [  5 ]
+        [  5 ]
+        [  5 ]
+
+        [ 5/3 ]
+    p = [ 5/3 ]
+        [ 5/3 ]
+
+        [  1 ]   [ 5/3 ]
+    e = [  2 ] - [ 5/3 ]
+        [  2 ]   [ 5/3 ]
+
+        [ -2/3 ]
+    e = [  1/3 ]
+        [  1/3 ]
+
+    e(a^T) = [ -2/3, 1/3, 1/3 ][ 1, 1, 1 ]
+           = -2/3 + 1/3 + 1/3
+           = 0
+
+ b. ( [ -1, -3, -1 ][ -1 -3 -1 ] / [ -1 -3 -1 ][ -1, -3, -1] )([ 1, 3, 1 ])
+
+        [  1  3  1 ][  1 ]
+    1/11[  3  9  3 ][  3 ]
+        [  1  3  1 ][  1 ]
+
+        [ 11 ]
+    1/11[ 33 ]
+        [ 11 ]
+
+        [ 1 ]
+    p = [ 3 ]
+        [ 1 ]
+
+        [ 1 ]   [ 1 ]
+    e = [ 3 ] - [ 3 ] = 0
+        [ 1 ]   [ 1 ]
+
+    e(a^T) = 0
+
+3.  For each of the above, find P, verify P^2 = P, compute p by Pb.
+ a. (a a^T) / (a^T a) b
+
+    ([ 1, 1, 1 ][ 1 1 1] / [ 1 1 1 ][ 1, 1, 1 ])([ 1, 2, 2 ])
+
+            [  1  1  1 ]
+    P = 1/3 [  1  1  1 ]
+            [  1  1  1 ]
+
+                [  3  3  3 ]
+    P^2 =   1/9 [  3  3  3 ] = P
+                [  3  3  3 ]
+
+        [  1  1  1 ][  1 ]
+    1/3 [  1  1  1 ][  2 ]
+        [  1  1  1 ][  2 ]
+
+        [  5 ]
+    1/3 [  5 ]
+        [  5 ]
+
+        [ 5/3 ]
+    p = [ 5/3 ]
+        [ 5/3 ]
+
+ b. ( [ -1, -3, -1 ][ -1 -3 -1 ] / [ -1 -3 -1 ][ -1, -3, -1] )([ 1, 3, 1 ])
+
+            [  1  3  1 ]
+    P = 1/11[  3  9  3 ]
+            [  1  3  1 ]
+
+                [ 11 33 11 ]
+    P^2 =  1/121[ 33 99 33 ] = P
+                [ 11 33 11 ]
+
+        [  1  3  1 ][  1 ]
+    1/11[  3  9  3 ][  3 ]
+        [  1  3  1 ][  1 ]
+
+        [ 11 ]
+    1/11[ 33 ]
+        [ 11 ]
+
+        [ 1 ]
+    p = [ 3 ]
+        [ 1 ]
+
+11. Project b onto the column space of A by solving A^T(Ax) = A^T(b) and p = Ax. Find e = b - p.
+ a. A^T(A)= [  1  1 ]
+            [  1  2 ]
+
+    (A^T(A))^-1= 1/1[  2 -1 ]
+                    [ -1  1 ]
+
+    * A^T = [  2 -1 ][  1  0  0 ]
+            [ -1  1 ][  1  1  0 ]
+
+    * b   = [  1 -1  0 ][  2 ]
+            [  0  1  0 ][  3 ]
+                        [  4 ]
+
+    x^    = [ -1 ]
+            [  3 ]
+
+    p = [  1  1 ][ -1 ]
+        [  0  1 ][  3 ]
+        [  0  0 ]
+
+      = [  2 ]
+        [  3 ]
+        [  0 ]
+
+        [  2 ]   [  2 ]   [  0 ]
+    e = [  3 ] - [  3 ] = [  0 ]
+        [  4 ]   [  0 ]   [  4 ]
+
+ b. A^T(A)= [  2  2 ]
+            [  2  3 ]
+
+    (A^T(A))^-1= 1/2[  3 -2 ]
+                    [ -2  2 ]
+
+    * A^T = 1/2 [  3 -2 ][  1  1  0 ]
+                [ -2  2 ][  1  1  1 ]
+
+    * b   = 1/2 [  1  1 -2 ][  4 ]
+                [  0  0  2 ][  4 ]
+                            [  6 ]
+
+    x^    = 1/2 [ -4 ] = [ -2 ]
+                [ 12 ]   [  6 ]
+
+    p = [  1  1 ][ -2 ]
+        [  1  1 ][  6 ]
+        [  0  1 ]
+
+      = [  4 ]
+        [  4 ]
+        [  6 ]
+
+        [  4 ]   [  4 ]   [  0 ]
+    e = [  4 ] - [  4 ] = [  0 ]
+        [  6 ]   [  6 ]   [  0 ]
+
+12.
+
+21. Multiply P by itself, show that P^2 = P.
+
+    P = A(A^T(A))^-1 A^T
+    P^2 = A(A^T(A))^-1 A^T A(A^T(A))^-1 A^T
+        = A(A^T(A))^-1 I A^T
+        = A(A^T(A))^-1 A^T
+        = P
+
+    Explain why P(Pb)=Pb: The vector Pb is in the column space, so the projection is always itself.
+
+22. Prove that P is symmetric by computing P^T.
+
+    P^T = ( A (A^T(A))^-1 A^T )^T
+        = (A^T)^T ((A^T(A))^-1)^T (A)^T
+        = A (A^T(A))^-1 A^T
+        = P
+
+
+Chapter 4.3
+
+1.  With b = { 0, 8, 8, 20 } while t = { 0, 1, 3, 4 }, set up and solve the normal equations
+    A^T(Ax) = A^T(b).
+
+    { C + 0D =  0 }
+    { C + 1D =  8 }
+    { C + 3D =  8 }
+    { C + 4D = 20 }
+
+        [  1  0 ]
+    A = [  1  1 ]
+        [  1  3 ]
+        [  1  4 ]
+
+    A^T=[  1  1  1  1 ]
+        [  0  1  3  4 ]
+
+    x = [ C ]
+        [ D ]
+
+    b = [  0 ]
+        [  8 ]
+        [  8 ]
+        [ 20 ]
+
+    (A^T(A))  = [ 4  8 ]
+                [ 8 26 ]
+
+    ^-1 * A^T = 1/40[ 26 -8 ][  1  1  1  1 ]
+                    [ -8  4 ][  0  1  3  4 ]
+
+    * b       = 1/40[ 26 18  2 -6 ] [  0 ]
+                    [ -8 -4  4  8 ] [  8 ]
+                                    [  8 ]
+                                    [ 20 ]
+
+    x         = 1/40[  40 ]
+                    [ 160 ]
+
+              = [  1 ]
+                [  4 ]
+
+    1 + 4t = b is the closest approximation.
+
+    For the best straight line in figure 4.9a, find its four heights pi and four
+    errors ei. What is the minimum value E = e1^2 + e2^2 + e3^2 + e4^2?
+
+    p1 = 1 + 4(0)   = 1
+    p2 = 1 + 4(1)   = 5
+    p3 = 1 + 4(3)   = 13
+    p4 = 1 + 4(4)   = 17
+
+    e1 = 0 - 1      = -1
+    e2 = 8 - 5      =  3
+    e3 = 8 - 13     = -5
+    e4 = 20 - 17    =  3
+
+    The minimum value for E is 1 + 9 + 25 + 9 = 44.
+
+2.  With b = { 0, 8, 8, 20 } while t = { 0, 1, 3, 4 }, write down the four equations Ax = b.
+
+    [  1  0 ][  C ]   [  0 ]
+    [  1  1 ][  D ] = [  8 ]
+    [  1  3 ]         [  8 ]
+    [  1  4 ]         [ 20 ]
+
+    Change the measurements to p = { 1, 5, 13, 17 } and find an exact solution.
+
+    As shown in problem 1, 1 + 4t = p is an exact solution, when C = 1 and D = 4.
+
+3.  Check that e = b - p = [ -1, 3, -5, 3 ] is perpendicular to both columns of the same matrix A.
+
+    A1^T = [  1  1  1  1 ]
+    A2^T = [  0  1  3  4 ]
+
+    A1^T(e) = 6 - 6 = 0
+    A2^T(e) = 3 - 15 + 12 = 0
+
+    What is the shortest distance ||e|| from b to the column space of A?
+
+    ||e|| = sqrt(1 + 9 + 25 + 9)
+          = sqrt(44)
+
+6.  Project b = [ 0, 8, 8, 20 ] onto the line through a = [ 1, 1, 1, 1 ]. Find x = a^T(b) / a^T(a)
+    and p = xa. Check that e = b - p is perpendicular to a, and find the shortest distance ||e||
+    from b to the line through a.
+
+    x = a^T(b) / a^T(a)
+      = [ 1 1 1 1 ][ 0, 8, 8, 20] / [ 1 1 1 1][ 1, 1, 1, 1 ]
+      = 36 / 1
+      = 36
+
+    p = xa
+      = 36[ 1, 1, 1, 1 ]
+      = [ 36, 36, 36, 36 ]
+
+    e = b - p
+      = [ 0, 8, 8, 20 ] - [ 36, 36, 36, 36 ]
+      = [ -36, -28, -28, -16 ]
+
