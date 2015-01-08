@@ -1,3 +1,8 @@
+// Jonathan Petersen
+// A01236750
+// Modern C++ Assignment
+// Template Class Definition
+
 #include "PetersenTesting.hpp"
 
 #include <iostream>
