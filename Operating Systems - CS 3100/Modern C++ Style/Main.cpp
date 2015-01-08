@@ -4,7 +4,7 @@
 int main() {
 
 	PetersenTesting myTest;
-	myTest.testFunction();
+	std::cout << myTest.testFunction()[0] << std::endl;
 
 	// std::cout << "Hello World!" << std::endl;
 
