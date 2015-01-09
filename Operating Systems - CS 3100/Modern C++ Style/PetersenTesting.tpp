@@ -3,7 +3,7 @@
 // Modern C++ Assignment
 // Template Class Definition
 
-// #include <iostream>
+#include <iostream>
 #include <numeric>
 #include <ctime>
 
@@ -46,28 +46,40 @@ double PetersenTesting::mean(container& source) {
 // Calculate the amount of time a given function takes to run.
 // callable must implement operator().
 template < typename callable >
-int PetersenTesting::runningTime(callable fn) {
+double PetersenTesting::runningTime(callable fn) {
 
 	clock_t clockTicks;
 	clockTicks = clock();
 	fn();
 	clockTicks = clock() - clockTicks;
 
-	return clockTicks;
+	// printf("%lu \n", clockTicks / CLOCKS_PER_SEC);
+
+	return static_cast<double>(clockTicks) / CLOCKS_PER_SEC;
 }
 
-// std::vector<double> PetersenTesting::testFunction() {
+// Aggregate funciton of the mean, standard deviation, and timing functions.
+// Calculates the mean and standard deviation of the running time of a function.
+// callable must implement operator().
+template < typename callable >
+std::vector<double> PetersenTesting::testFunction(callable fn) {
 
-// 	// std::vector<float> test1;
-// 	// test1.push_back(4.5);
-// 	// test1.push_back(5.3);
-// 	// test1.push_back(9.2);
+	std::vector<double> times;
+	std::vector<double> result;
 
-// 	// std::vector<float> test2;
-// 	// test1.push_back(4.5);
-// 	// test1.push_back(5.3);
-// 	// test1.push_back(9.2);
+	for (int i = 0; i < NUM_TESTS; ++i) {
+		times.push_back(runningTime(fn));
+	}
 
-// 	return 7;
-// }
+	// for (double i : times) {
+	// 	printf("%0.20f \n", i);
+	// }
+
+	// std::cout << CLOCKS_PER_SEC << std::endl;
+
+	result.push_back(mean(times));
+	result.push_back(standardDeviation(times));
+
+	return result;
+}
 

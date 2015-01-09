@@ -15,10 +15,12 @@ public:
 
 	template <typename container> double standardDeviation(container& source);
 	template <typename container> double mean(container& source);
-	template <typename callable> int runningTime(callable fn);
-	// std::vector<double> testFunction();
+	template <typename callable> double runningTime(callable fn);
+	template <typename callable> std::vector<double> testFunction(callable fn);
 
 private:
+	int static const NUM_TESTS = 1000000;
+
 	// int static const NUM_TEST_FUNCTIONS;
 	// double m_standardDeviation;
 	// double m_mean;
