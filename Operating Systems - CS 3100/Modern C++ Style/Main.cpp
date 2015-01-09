@@ -1,28 +1,39 @@
 #include <iostream>
 #include <vector>
-#include "PetersenTesting.hpp"
+#include "CandleStats.hpp"
+
+void myFunction();
 
 int main() {
 
-	PetersenTesting myTest;
+	CandleStats myTest;
+	void (*functionPtr)(void) = &myFunction;
+	std::vector< std::vector<double> > result;
 
-	std::vector<double> result;
-	result = myTest.testFunction([](){
-		std::cout << "Hello World" << std::endl;
-	});
+	// Setup the Tests
+	result.push_back(
+		myTest.testFunction([](){
+			std::cout << "Hello World \r";
+		})
+	);
 
-	printf("Mean: %0.20f, Standard Deviation: %0.20f \n", result[0], result[1]);
-	// result.push_back(2.1);
-	// result.push_back(2.8);
-	// result.push_back(2.1);
+	result.push_back(
+		myTest.testFunction(myFunction)
+	);
 
-	// printf("%0.2f \n", myTest.mean(result));
-	// printf("%0.2f \n", myTest.standardDeviation(result));
-	// printf("%d \n", myTest.runningTime([](){
-	// 	std::cout << "Hello World!" << std::endl;
-	// }));
-
-
+	// Show the results
+	for (int i = 0; i < result.size(); ++i)
+	{
+		printf("Mean: %0.20f sec., Standard Deviation: %0.20f sec.\n", result[0][i], result[0][i]);
+	}
 
 	return 0;
+}
+
+void myFunction() {
+	int a = 5;
+	int b = 7;
+	int c = 5 * 7;
+
+	return;
 }

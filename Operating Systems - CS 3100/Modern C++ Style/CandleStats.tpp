@@ -3,7 +3,8 @@
 // Modern C++ Assignment
 // Template Class Definition
 
-#include <iostream>
+#ifdef _CANDLE_STATISTICS
+
 #include <numeric>
 #include <ctime>
 
@@ -11,7 +12,7 @@
 // container needs to implement .begin(), .end(), and .size(). All of the
 // STL containers should meet this requirement.
 template < typename container >
-double PetersenTesting::standardDeviation(container& source) {
+double CandleStats::standardDeviation(container& source) {
 
 	double stdDev = 0;
 	double xbar = mean(source);
@@ -31,7 +32,7 @@ double PetersenTesting::standardDeviation(container& source) {
 // container needs to implement .begin(), .end(), and .size(). All of the
 // STL containers should meet this requirement.
 template < typename container >
-double PetersenTesting::mean(container& source) {
+double CandleStats::mean(container& source) {
 
 	// Compute the sum of the values
 	// Accumulate needs a double as the third paramater, otherwise it casts to int.
@@ -46,14 +47,18 @@ double PetersenTesting::mean(container& source) {
 // Calculate the amount of time a given function takes to run.
 // callable must implement operator().
 template < typename callable >
-double PetersenTesting::runningTime(callable fn) {
+double CandleStats::runningTime(callable const & fn) {
 
 	clock_t clockTicks;
-	clockTicks = clock();
-	fn();
-	clockTicks = clock() - clockTicks;
 
-	// printf("%lu \n", clockTicks / CLOCKS_PER_SEC);
+	// Start Timer
+	clockTicks = clock();
+
+	// Call Function
+	fn();
+
+	// Finish Timer
+	clockTicks = clock() - clockTicks;
 
 	return static_cast<double>(clockTicks) / CLOCKS_PER_SEC;
 }
@@ -62,24 +67,21 @@ double PetersenTesting::runningTime(callable fn) {
 // Calculates the mean and standard deviation of the running time of a function.
 // callable must implement operator().
 template < typename callable >
-std::vector<double> PetersenTesting::testFunction(callable fn) {
+std::vector<double> CandleStats::testFunction(callable const & fn) {
 
 	std::vector<double> times;
 	std::vector<double> result;
 
+	// Run the tests NUM_TESTS times.
 	for (int i = 0; i < NUM_TESTS; ++i) {
 		times.push_back(runningTime(fn));
 	}
 
-	// for (double i : times) {
-	// 	printf("%0.20f \n", i);
-	// }
-
-	// std::cout << CLOCKS_PER_SEC << std::endl;
-
+	// Add the statistics to the results
 	result.push_back(mean(times));
 	result.push_back(standardDeviation(times));
 
 	return result;
 }
 
+#endif
