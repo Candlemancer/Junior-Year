@@ -13,17 +13,18 @@ class PetersenTesting {
 public:
 	// PetersenTesting();
 
-	double standardDeviation(std::vector<float> source);
-	double mean(std::vector<float> source);
-	double runningTime();
-	std::vector<double> testFunction();
+	template <typename container> double standardDeviation(container& source);
+	template <typename container> double mean(container& source);
+	template <typename callable> int runningTime(callable fn);
+	// std::vector<double> testFunction();
 
 private:
-	int static const NUM_TEST_FUNCTIONS;
+	// int static const NUM_TEST_FUNCTIONS;
 	// double m_standardDeviation;
 	// double m_mean;
 	// double m_runningTime;
 
 };
 
+#include "PetersenTesting.tpp"
 #endif
