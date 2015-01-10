@@ -1,39 +1,50 @@
+// Jonathan Petersen
+// A01236750
+// Modern C++ Assignment
+// Driver Code
+
 #include <iostream>
 #include <vector>
+#include <string>
+#include <tuple>
 #include "CandleStats.hpp"
 
-void myFunction();
+void myFunction(int x);
 
 int main() {
 
 	CandleStats myTest;
-	void (*functionPtr)(void) = &myFunction;
-	std::vector< std::vector<double> > result;
+	std::vector< std::tuple<std::string, double, double> > result;
 
 	// Setup the Tests
 	result.push_back(
-		myTest.testFunction([](){
-			std::cout << "Hello World \r";
-		})
+		myTest.testFunction("Hello World",
+			[](){ fprintf(stderr, "Hello World \r"); }
+		)
+
 	);
 
 	result.push_back(
-		myTest.testFunction(myFunction)
+		myTest.testFunction("MyFunction",
+			[](){ myFunction(7); }
+		)
 	);
 
 	// Show the results
-	for (int i = 0; i < result.size(); ++i)
-	{
-		printf("Mean: %0.20f sec., Standard Deviation: %0.20f sec.\n", result[0][i], result[0][i]);
+	for (auto&& line : result) {
+		// printf("%s \n", std::get<0>(line).c_str(), std::ge );
+		printf("| %-20s Mean: %0.10f sec., Standard Deviation: %0.10f sec.\n",
+				std::get<0>(line).c_str(), std::get<1>(line), std::get<2>(line) );
 	}
 
 	return 0;
 }
 
-void myFunction() {
+void myFunction(int x) {
 	int a = 5;
 	int b = 7;
 	int c = 5 * 7;
+	int d = x;
 
 	return;
 }

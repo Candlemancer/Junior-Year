@@ -5,8 +5,10 @@
 
 #ifdef _CANDLE_STATISTICS
 
+#include <typeinfo>
 #include <numeric>
 #include <ctime>
+#include <array>
 
 // Calculate the Standard Deviation of all the values stored in a container.
 // container needs to implement .begin(), .end(), and .size(). All of the
@@ -18,7 +20,7 @@ double CandleStats::standardDeviation(container& source) {
 	double xbar = mean(source);
 
 	// Calculate the sum of squared differences from the mean.
-	for (auto i : source) {
+	for (auto&& i : source) {
 		stdDev += (i - xbar) * (i - xbar);
 	}
 
@@ -67,21 +69,21 @@ double CandleStats::runningTime(callable const & fn) {
 // Calculates the mean and standard deviation of the running time of a function.
 // callable must implement operator().
 template < typename callable >
-std::vector<double> CandleStats::testFunction(callable const & fn) {
+std::tuple<std::string, double, double> CandleStats::testFunction(std::string name,
+		callable const & fn) {
 
-	std::vector<double> times;
-	std::vector<double> result;
+	std::array<double, NUM_TESTS> times;
+	std::tuple<std::string, double, double> results;
 
 	// Run the tests NUM_TESTS times.
-	for (int i = 0; i < NUM_TESTS; ++i) {
-		times.push_back(runningTime(fn));
-	}
+	std::generate(times.begin(), times.end(),
+		[&](){ return runningTime(fn); }
+	);
 
 	// Add the statistics to the results
-	result.push_back(mean(times));
-	result.push_back(standardDeviation(times));
+	results = std::make_tuple( name, mean(times), standardDeviation(times) );
 
-	return result;
+	return results;
 }
 
 #endif
