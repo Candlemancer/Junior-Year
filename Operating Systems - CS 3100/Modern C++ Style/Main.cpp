@@ -33,7 +33,7 @@ int main() {
 	// Show the results
 	for (auto&& line : result) {
 		// printf("%s \n", std::get<0>(line).c_str(), std::ge );
-		printf("| %-20s Mean: %0.10f sec., Standard Deviation: %0.10f sec.\n",
+		printf("| %-20s Mean: %0.16f sec., Standard Deviation: %0.16f sec.\n",
 				std::get<0>(line).c_str(), std::get<1>(line), std::get<2>(line) );
 	}
 

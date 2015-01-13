@@ -14,7 +14,7 @@
 // container needs to implement .begin(), .end(), and .size(). All of the
 // STL containers should meet this requirement.
 template < typename container >
-double CandleStats::standardDeviation(container& source) {
+double CandleStats::standardDeviation(container const & source) {
 
 	double stdDev = 0;
 	double xbar = mean(source);
@@ -34,11 +34,13 @@ double CandleStats::standardDeviation(container& source) {
 // container needs to implement .begin(), .end(), and .size(). All of the
 // STL containers should meet this requirement.
 template < typename container >
-double CandleStats::mean(container& source) {
+double CandleStats::mean(container const & source) {
+
+	// Static Assert for error messages.
 
 	// Compute the sum of the values
 	// Accumulate needs a double as the third paramater, otherwise it casts to int.
-	double xbar = std::accumulate(source.begin(), source.end(), 0.0);
+	double xbar = std::accumulate(source.cbegin(), source.cend(), 0.0);
 
 	// Divide by the number of values
 	xbar = xbar / static_cast<double>(source.size());
@@ -50,6 +52,8 @@ double CandleStats::mean(container& source) {
 // callable must implement operator().
 template < typename callable >
 double CandleStats::runningTime(callable const & fn) {
+//std::chrono::duration
+
 
 	clock_t clockTicks;
 
@@ -71,6 +75,8 @@ double CandleStats::runningTime(callable const & fn) {
 template < typename callable >
 std::tuple<std::string, double, double> CandleStats::testFunction(std::string name,
 		callable const & fn) {
+// Use the class member variables?
+
 
 	std::array<double, NUM_TESTS> times;
 	std::tuple<std::string, double, double> results;

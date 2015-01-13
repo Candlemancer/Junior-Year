@@ -12,8 +12,8 @@
 class CandleStats {
 
 public:
-	template <typename container> double standardDeviation(container& source);
-	template <typename container> double mean(container& source);
+	template <typename container> double standardDeviation(container const & source);
+	template <typename container> double mean(container const & source);
 	template <typename callable> double runningTime(callable const & fn);
 	template <typename callable> std::tuple<std::string, double, double>
 			testFunction(std::string name, callable const & fn);
