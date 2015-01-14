@@ -8,20 +8,32 @@
 
 #include <vector>
 #include <string>
+#include <chrono>
 
 class CandleStats {
 
 public:
-	template <typename container> double standardDeviation(container const & source);
-	template <typename container> double mean(container const & source);
-	template <typename callable> double runningTime(callable const & fn);
-	template <typename callable> std::tuple<std::string, double, double>
-			testFunction(std::string name, callable const & fn);
+	template <typename Callable>
+		CandleStats(std::string name, Callable const & fn, int numTests = 1000000);
+
+	double const getMean() { return mean; }
+	double const getStandardDeviation() { return stdDev; }
+	std::string const getName() { return functionName; }
+	void const printResults();
 
 private:
+	void calculateMean();
+	void calculateStandardDeviation();
+	template <typename Callable> std::chrono::duration<double>
+		calculateRunningTime(Callable const & fn);
+
 	// Number of running times to gather for the tests
-	int static const NUM_TESTS = 1000000;
-	int static const NUM_RESULTS = 2;
+	int const NUM_TESTS;
+
+	double mean;
+	double stdDev;
+	std::string functionName;
+	std::vector<std::chrono::duration<double>> times;
 
 };
 

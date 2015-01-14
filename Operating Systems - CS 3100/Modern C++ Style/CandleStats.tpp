@@ -9,87 +9,72 @@
 #include <numeric>
 #include <ctime>
 #include <array>
+#include <cmath>
 
-// Calculate the Standard Deviation of all the values stored in a container.
-// container needs to implement .begin(), .end(), and .size(). All of the
-// STL containers should meet this requirement.
-template < typename container >
-double CandleStats::standardDeviation(container const & source) {
 
-	double stdDev = 0;
-	double xbar = mean(source);
+template < typename Callable >
+CandleStats::CandleStats(std::string name, Callable const & fn, int numTests)
+	: functionName(name),
+	  NUM_TESTS(numTests) {
 
-	// Calculate the sum of squared differences from the mean.
-	for (auto&& i : source) {
-		stdDev += (i - xbar) * (i - xbar);
-	}
+	// Run the tests NUM_TESTS times.
+	std::generate_n(std::back_inserter(times), numTests,
+		[&](){ return calculateRunningTime(fn); }
+	);
 
-	// Divide by n - 1.
-	stdDev = stdDev / (static_cast<double>(source.size()) - 1.0);
+	// Add the statistics to the results
+	calculateMean();
+	calculateStandardDeviation();
 
-	return stdDev;
+	return;
+
 }
 
-// Calculate the arithmetic mean of all the values stored in a container.
-// container needs to implement .begin(), .end(), and .size(). All of the
-// STL containers should meet this requirement.
-template < typename container >
-double CandleStats::mean(container const & source) {
+void const CandleStats::printResults() {
 
-	// Static Assert for error messages.
+	printf("| %16s - Mean: %0.10f Standard Deviation: %0.10f \n",
+		functionName.c_str(),
+		mean,
+		stdDev);
 
-	// Compute the sum of the values
-	// Accumulate needs a double as the third paramater, otherwise it casts to int.
-	double xbar = std::accumulate(source.cbegin(), source.cend(), 0.0);
+	return;
+}
 
-	// Divide by the number of values
-	xbar = xbar / static_cast<double>(source.size());
 
-	return xbar;
+void CandleStats::calculateMean() {
+
+	mean = std::accumulate(times.cbegin(), times.cend(), times[0].zero()).count();
+	mean = mean / times.size();
+
+	return;
+}
+
+void CandleStats::calculateStandardDeviation() {
+
+	std::vector<double> differences (times.size());
+	for (auto&& i : times) {
+		differences.push_back( (i.count() - mean) * (i.count() - mean) );
+	}
+	stdDev = std::accumulate(differences.cbegin(), differences.cend(), 0.0);
+	stdDev = stdDev / (differences.size() - 1);
+	stdDev = std::sqrt(stdDev);
+
+	return;
 }
 
 // Calculate the amount of time a given function takes to run.
 // callable must implement operator().
-template < typename callable >
-double CandleStats::runningTime(callable const & fn) {
-//std::chrono::duration
+template < typename Callable >
+std::chrono::duration<double> CandleStats::calculateRunningTime(Callable const & fn) {
 
+	using std::chrono::system_clock;
 
-	clock_t clockTicks;
-
-	// Start Timer
-	clockTicks = clock();
-
-	// Call Function
+	system_clock::time_point start = system_clock::now();
 	fn();
+	system_clock::time_point stop = system_clock::now();
 
-	// Finish Timer
-	clockTicks = clock() - clockTicks;
-
-	return static_cast<double>(clockTicks) / CLOCKS_PER_SEC;
+	return stop - start;
 }
 
-// Aggregate funciton of the mean, standard deviation, and timing functions.
-// Calculates the mean and standard deviation of the running time of a function.
-// callable must implement operator().
-template < typename callable >
-std::tuple<std::string, double, double> CandleStats::testFunction(std::string name,
-		callable const & fn) {
-// Use the class member variables?
-
-
-	std::array<double, NUM_TESTS> times;
-	std::tuple<std::string, double, double> results;
-
-	// Run the tests NUM_TESTS times.
-	std::generate(times.begin(), times.end(),
-		[&](){ return runningTime(fn); }
-	);
-
-	// Add the statistics to the results
-	results = std::make_tuple( name, mean(times), standardDeviation(times) );
-
-	return results;
-}
 
 #endif
