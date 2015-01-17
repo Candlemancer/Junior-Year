@@ -7,22 +7,26 @@
 #include <vector>
 
 #include "PortablePixMap.hpp"
+#include "Mandelbrot.hpp"
 
 
 int main() {
 
-	std::vector<std::vector<int>> myData;
-	std::vector<int> v1 {1, 0, 1, 0, 1};
-	std::vector<int> v2 {0, 1, 0, 1, 0};
-	std::vector<int> v3 {1, 0, 1, 0, 1};
-	std::vector<int> v4 {0, 1, 0, 1, 0};
-	std::vector<int> v5 {1, 0, 1, 0, 1};
+	Mandelbrot myMandelbrot;
 
-	myData.push_back(v1);
-	myData.push_back(v2);
-	myData.push_back(v3);
-	myData.push_back(v4);
-	myData.push_back(v5);
+	std::vector<std::vector<int>> myData;
+	// std::vector<int> v1 {1, 0, 1, 0, 1};
+	// std::vector<int> v2 {0, 1, 0, 1, 0};
+	// std::vector<int> v3 {1, 0, 1, 0, 1};
+	// std::vector<int> v4 {0, 1, 0, 1, 0};
+	// std::vector<int> v5 {1, 0, 1, 0, 1};
+
+	// myData.push_back(v1);
+	// myData.push_back(v2);
+	// myData.push_back(v3);
+	// myData.push_back(v4);
+	// myData.push_back(v5);
+	myData = myMandelbrot.getData();
 
 	PortablePixMap myPixMap(myData);
 
