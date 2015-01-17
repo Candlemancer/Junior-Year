@@ -14,7 +14,11 @@ public:
 
 	Mandelbrot();
 	void generate();
+	void changeView(double xLow, double yLow, double xHigh, double yHigh);
+	void changeView(double xMid, double yMid, double yScale);
+	int getMax() { return maxValue; }
 	std::vector<std::vector<int>> getData() { return data; }
+
 
 private:
 
@@ -22,6 +26,7 @@ private:
 
 	int viewWidth;
 	int viewHeight;
+	int maxValue;
 	double xLowerBound;
 	double xUpperBound;
 	double yLowerBound;

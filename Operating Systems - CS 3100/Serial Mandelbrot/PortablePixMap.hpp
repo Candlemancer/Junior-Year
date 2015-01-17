@@ -14,6 +14,7 @@ class PortablePixMap{
 public:
 
 	enum ImageType {
+		UNKNOWN,
 		BITMAP_TXT,
 		GRAYMAP_TXT,
 		PIXMAP_TXT,
@@ -24,10 +25,8 @@ public:
 
 	PortablePixMap();
 	PortablePixMap(
-		std::vector<std::vector<int>>& data,
+		std::vector<std::vector<int>> data,
 		ImageType fileType = BITMAP_TXT,
-		int width = 16,
-		int height = 16,
 		int colorDepth = 16
 		);
 

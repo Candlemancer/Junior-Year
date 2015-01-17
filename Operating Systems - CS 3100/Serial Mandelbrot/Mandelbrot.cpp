@@ -4,14 +4,15 @@
 // Mandelbrot Class Implementation
 
 #include "Mandelbrot.hpp"
+#include <algorithm>
 
 Mandelbrot::Mandelbrot() :
 	viewWidth(640),
 	viewHeight(480),
-	xLowerBound(-3.0),
-	xUpperBound(3.0),
-	yLowerBound(-3.0),
-	yUpperBound(3.0) {
+	xLowerBound(-2.0),
+	xUpperBound(0.3333333333),
+	yLowerBound(-1.0),
+	yUpperBound(1.0) {
 		generate();
 	}
 
@@ -19,9 +20,10 @@ void Mandelbrot::generate() {
 
 	double x = xLowerBound;
 	double y = yLowerBound;
+	int currentIterations = 0;
 	std::vector<int> currentLine;
 
-	for (int i = 0; i < viewHeight; i++) {
+	for (int i = viewHeight; i > 0; i--) {
 
 		y = (i * (yUpperBound - yLowerBound)/viewHeight) + yLowerBound;
 
@@ -29,7 +31,10 @@ void Mandelbrot::generate() {
 
 			x = (j * (xUpperBound - xLowerBound)/viewHeight) + xLowerBound;
 
-			currentLine.push_back( testPoint(x, y) );
+			currentIterations = testPoint(x, y);
+			maxValue = std::max(maxValue, currentIterations);
+			currentLine.push_back(currentIterations);
+
 		}
 
 		data.push_back(currentLine);
@@ -37,6 +42,34 @@ void Mandelbrot::generate() {
 
 	}
 }
+
+void Mandelbrot::changeView(double xLow, double yLow, double xHigh, double yHigh) {
+
+	data.erase(data.begin(), data.end());
+
+	xLowerBound = xLow;
+	xUpperBound = xHigh;
+	yLowerBound = yLow;
+	yUpperBound = yHigh;
+
+	generate();
+	return;
+}
+
+void Mandelbrot::changeView(double xMid, double yMid, double yHeight) {
+
+	data.erase(data.begin(), data.end());
+
+	xLowerBound = xMid - ((yHeight + (1.0 / 3.0)) / 2.0);
+	xUpperBound = xMid + ((yHeight + (1.0 / 3.0)) / 2.0);
+	yLowerBound = yMid - (yHeight / 2.0);
+	yUpperBound = yMid + (yHeight / 2.0);
+
+	generate();
+	return;
+}
+
+
 
 int Mandelbrot::testPoint(double x0, double y0) {
 
