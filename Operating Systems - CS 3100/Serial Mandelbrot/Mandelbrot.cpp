@@ -16,6 +16,24 @@ Mandelbrot::Mandelbrot() :
 		generate();
 	}
 
+Mandelbrot::Mandelbrot(
+	double xLow,
+	double xHigh,
+	double yLow,
+	double yHigh,
+	int width,
+	int height) :
+
+	viewWidth(width),
+	viewHeight(height),
+	xLowerBound(xLow),
+	xUpperBound(xHigh),
+	yLowerBound(yLow),
+	yUpperBound(yHigh) {
+		generate();
+	}
+
+
 void Mandelbrot::generate() {
 
 	double x = xLowerBound;
@@ -52,7 +70,7 @@ void Mandelbrot::changeView(double xLow, double yLow, double xHigh, double yHigh
 	yLowerBound = yLow;
 	yUpperBound = yHigh;
 
-	generate();
+	//generate();
 	return;
 }
 
@@ -60,39 +78,49 @@ void Mandelbrot::changeView(double xMid, double yMid, double yHeight) {
 
 	data.erase(data.begin(), data.end());
 
-	xLowerBound = xMid - ((yHeight + (1.0 / 3.0)) / 2.0);
-	xUpperBound = xMid + ((yHeight + (1.0 / 3.0)) / 2.0);
+	xLowerBound = xMid - ((yHeight /*+ (1.0 / 3.0)*/) / 2.0);
+	xUpperBound = xMid + ((yHeight /*+ (1.0 / 3.0)*/) / 2.0);
 	yLowerBound = yMid - (yHeight / 2.0);
 	yUpperBound = yMid + (yHeight / 2.0);
+
+	//generate();
+	return;
+}
+
+void Mandelbrot::changeSize(int width, int height) {
+
+	viewWidth = width;
+	viewHeight = height;
 
 	generate();
 	return;
 }
 
 
-
 int Mandelbrot::testPoint(double x0, double y0) {
 
 	double iteration    =    0;
-	double iterationMax = 4096;
-	double t = 0;
+	double iterationMax = 8192;
 	double x = 0;
 	double y = 0;
-	double z = 0;
+	double xTemp = 0;
+	double yTemp = 0;
 
 	//Count number of iterations
-	while(x*x + y*y <= 2 && iteration < iterationMax){
+	while(x*x + y*y <= 4 && iteration < iterationMax){
 
-		t = 2 * x * y + y0;
-		x = x*x - y*y + x0;
-		y = t;
-
+		xTemp = x*x - y*y + x0;
+		yTemp = 2 * x * y + y0;
+		if (x == xTemp && y == yTemp) {
+			iteration = iterationMax;
+			break;
+		}
+		x = xTemp;
+		y = yTemp;
 		iteration++;
 	}
 
 	//Set result to number of iterations, or 0 if no result
-	if(iteration != iterationMax) z = iteration;
-	if(iteration == iterationMax) z = 0;
-
-	return z;
+	if(iteration == iterationMax) { return 0; }
+	return iteration;
 }

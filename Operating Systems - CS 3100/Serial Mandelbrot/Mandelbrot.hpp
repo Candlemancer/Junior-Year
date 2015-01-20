@@ -13,9 +13,20 @@ class Mandelbrot {
 public:
 
 	Mandelbrot();
+	Mandelbrot(
+		double xLow,
+		double xHigh,
+		double yLow,
+		double yHigh,
+		int width = 640,
+		int height = 480
+	);
+
 	void generate();
 	void changeView(double xLow, double yLow, double xHigh, double yHigh);
 	void changeView(double xMid, double yMid, double yScale);
+	void changeSize(int width, int height);
+
 	int getMax() { return maxValue; }
 	std::vector<std::vector<int>> getData() { return data; }
 

@@ -32,7 +32,7 @@ CandleStats::CandleStats(std::string name, Callable const & fn, int numTests)
 
 void const CandleStats::printResults() {
 
-	printf("| %16s - Mean: %0.10f Standard Deviation: %0.10f \n",
+	printf("| %32s - Mean: %0.16f sec. Standard Deviation: %0.16f sec.\n",
 		functionName.c_str(),
 		mean,
 		stdDev);

@@ -5,14 +5,19 @@
 
 // Adapted from my previous mandelbrot assignment.
 #include <vector>
+#include <limits>
+#include <sstream>
+#include <iostream>
 
 #include "PortablePixMap.hpp"
 #include "Mandelbrot.hpp"
+// #include "../Modern C++ Style/CandleStats.hpp"
 
 
 int main() {
 
-	Mandelbrot myMandelbrot;
+	Mandelbrot myMandelbrot(2, 2, 2, 2, 6, 4);
+	std::stringstream ss;
 
 	// std::vector<std::vector<int>> myData;
 	// std::vector<int> v1 {1, 0, 1, 0, 1};
@@ -29,7 +34,23 @@ int main() {
 	// myData = myMandelbrot.getData();
 
 	// myMandelbrot.changeView(-0.6, 0.5, -0.4, 0.7);
-	myMandelbrot.changeView(-0.5, 0.7, 0.5);
+	myMandelbrot.changeView(-0.44005, 0.56, 0.00005);
+
+	// Begin Tests
+
+	for (int i = 1; i <= 100; i++) {
+		myMandelbrot.changeSize((2880 / 100.0) * i, (1800 / 100.0) * i);
+
+		ss << "(" << i << ") " << "Mandelbrot "
+			<< ((2880 / 100.0) * i) << " x " << ((1800 / 100.0) * i);
+		// CandleStats myTest(ss.str(),
+			/*[&](){*/ myMandelbrot.generate();/* },*/
+			// 3
+		// );
+		// myTest.printResults();
+		ss.str("");
+
+	}
 
 	PortablePixMap myPixMap(
 		myMandelbrot.getData(),
