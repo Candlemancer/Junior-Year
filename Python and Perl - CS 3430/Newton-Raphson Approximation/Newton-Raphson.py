@@ -31,5 +31,5 @@ def newtonRaphsonApproximation(guess, function, derivativeFunction, lastGuess = 
 		derivativeFunction,
 		guess);
 
-print newtonRaphsonApproximation(2, myFun, myFunPrime);
-print newtonRaphsonApproximation(1, yourFun, yourFunPrime);
+print newtonRaphsonApproximation(2.0, myFun, myFunPrime);
+print newtonRaphsonApproximation(1.0, yourFun, yourFunPrime);

@@ -27,7 +27,8 @@ void myFunction(int x) {
 	int a = 5;
 	int b = 7;
 	int c = 5 * 7;
-	int d = x;
+	int d = x + a + b + c;
+	c = d;
 
 	return;
 }

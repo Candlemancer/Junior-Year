@@ -16,10 +16,10 @@ public:
 	template <typename Callable>
 		CandleStats(std::string name, Callable const & fn, int numTests = 1000000);
 
-	double const getMean() { return mean; }
-	double const getStandardDeviation() { return stdDev; }
-	std::string const getName() { return functionName; }
-	void const printResults();
+	double getMean() { return mean; }
+	double getStandardDeviation() { return stdDev; }
+	std::string getName() { return functionName; }
+	void printResults();
 
 private:
 	void calculateMean();

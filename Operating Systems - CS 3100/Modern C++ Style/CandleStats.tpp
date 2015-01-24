@@ -5,6 +5,7 @@
 
 #ifdef _CANDLE_STATISTICS
 
+#include <algorithm>
 #include <typeinfo>
 #include <numeric>
 #include <ctime>
@@ -13,9 +14,9 @@
 
 
 template < typename Callable >
-CandleStats::CandleStats(std::string name, Callable const & fn, int numTests)
-	: functionName(name),
-	  NUM_TESTS(numTests) {
+CandleStats::CandleStats(std::string name, Callable const & fn, int numTests) :
+	NUM_TESTS(numTests),
+	functionName(name) {
 
 	// Run the tests NUM_TESTS times.
 	std::generate_n(std::back_inserter(times), numTests,
@@ -30,7 +31,7 @@ CandleStats::CandleStats(std::string name, Callable const & fn, int numTests)
 
 }
 
-void const CandleStats::printResults() {
+void CandleStats::printResults() {
 
 	printf("| %32s - Mean: %0.16f sec. Standard Deviation: %0.16f sec.\n",
 		functionName.c_str(),
