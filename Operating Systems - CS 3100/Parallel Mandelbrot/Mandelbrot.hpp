@@ -7,6 +7,8 @@
 #define _MANDELBROT_HPP
 
 #include <vector>
+#include <mutex>
+
 
 class Mandelbrot {
 
@@ -22,7 +24,7 @@ public:
 		int height = 480
 	);
 
-	void generate();
+	void generate(int numThreads = 1);
 	void changeView(double xLow, double yLow, double xHigh, double yHigh);
 	void changeView(double xMid, double yMid, double yScale);
 	void changeSize(int width, int height);
@@ -34,6 +36,8 @@ public:
 private:
 
 	int testPoint(double x0, double y0);
+	void generateLines(int topLine, int bottomLine = 0);
+	void save(std::vector<int> line, int index);
 
 	int viewWidth;
 	int viewHeight;
@@ -43,6 +47,7 @@ private:
 	double yLowerBound;
 	double yUpperBound;
 
+	std::mutex dataLock;
 	std::vector<std::vector<int>> data;
 
 };

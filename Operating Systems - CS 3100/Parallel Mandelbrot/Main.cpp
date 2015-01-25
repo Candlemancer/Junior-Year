@@ -19,37 +19,27 @@ int main() {
 	Mandelbrot myMandelbrot(2, 2, 2, 2, 6, 4);
 	std::stringstream ss;
 
-	// std::vector<std::vector<int>> myData;
-	// std::vector<int> v1 {1, 0, 1, 0, 1};
-	// std::vector<int> v2 {0, 1, 0, 1, 0};
-	// std::vector<int> v3 {3, 0, 3, 0, 3};
-	// std::vector<int> v4 {0, 1, 0, 1, 0};
-	// std::vector<int> v5 {1, 0, 1, 0, 1};
+	// Setup View Window
+	// myMandelbrot.changeView(-0.6, 0.5, -0.4, 0.7);
+	myMandelbrot.changeView(-0.44005, 0.56, 0.00005);
 
-	// myData.push_back(v1);
-	// myData.push_back(v2);
-	// myData.push_back(v3);
-	// myData.push_back(v4);
-	// myData.push_back(v5);
-	// myData = myMandelbrot.getData();
+	myMandelbrot.changeSize(640, 480);
+	myMandelbrot.generate(8);
 
-	myMandelbrot.changeView(-0.6, 0.5, -0.4, 0.7);
-	// myMandelbrot.changeView(-0.44005, 0.56, 0.00005);
 	// Begin Tests
+	// for (int i = 1; i <= 50; i++) {
+	// 	myMandelbrot.changeSize((2880 / 100.0) * i, (1800 / 100.0) * i);
 
-	for (int i = 1; i <= 50; i++) {
-		myMandelbrot.changeSize((2880 / 100.0) * i, (1800 / 100.0) * i);
+	// 	ss << "(" << i << ") " << "Mandelbrot "
+	// 		<< ((2880 / 100.0) * i) << " x " << ((1800 / 100.0) * i);
+	// 	CandleStats myTest(ss.str(),
+	// 		[&](){ myMandelbrot.generate(); },
+	// 		3
+	// 	);
+	// 	myTest.printResults();
+	// 	ss.str("");
 
-		ss << "(" << i << ") " << "Mandelbrot "
-			<< ((2880 / 100.0) * i) << " x " << ((1800 / 100.0) * i);
-		CandleStats myTest(ss.str(),
-			[&](){ myMandelbrot.generate(); },
-			3
-		);
-		myTest.printResults();
-		ss.str("");
-
-	}
+	// }
 
 	PortablePixMap myPixMap(
 		myMandelbrot.getData(),
