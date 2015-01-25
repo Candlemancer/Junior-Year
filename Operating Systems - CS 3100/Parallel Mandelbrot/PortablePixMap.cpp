@@ -4,6 +4,7 @@
 // Portable PixMap Implementation
 
 #include "PortablePixMap.hpp"
+#include <algorithm>
 
 PortablePixMap::PortablePixMap() :
 	FILE_TYPE(BITMAP_TXT),
@@ -33,6 +34,9 @@ PortablePixMap::PortablePixMap(
 	if (FILE_TYPE != BITMAP_TXT && FILE_TYPE != BITMAP_BIN) {
 		fout << COLOR_DEPTH << std::endl;
 	}
+
+	// Convert from bottom up array to top down.
+	// std::reverse(pixels.begin(), pixels.end());
 
 	for (auto&& i : pixels) {
 

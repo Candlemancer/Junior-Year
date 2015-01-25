@@ -8,7 +8,7 @@
 #include <thread>
 #include <vector>
 
-#include <iostream>
+// #include <iostream>
 
 Mandelbrot::Mandelbrot() :
 	viewWidth(640),
@@ -17,11 +17,6 @@ Mandelbrot::Mandelbrot() :
 	xUpperBound(0.3333333333),
 	yLowerBound(-1.0),
 	yUpperBound(1.0) {
-		data.reserve(viewHeight);
-		for (int i = 0; i < viewHeight; ++i)
-		{
-			data.push_back(std::vector<int>() = {1} );
-		}
 		generate();
 	}
 
@@ -39,15 +34,6 @@ Mandelbrot::Mandelbrot(
 	xUpperBound(xHigh),
 	yLowerBound(yLow),
 	yUpperBound(yHigh) {
-		data.reserve(viewHeight);
-		for (int i = 0; i < viewHeight; ++i)
-		{
-			data.push_back(std::vector<int>() = {1} );
-		}
-		for (auto&& i : data) {
-			std::cout << i[0] << " ";
-		}
-		std::cout << data.size() << std::endl;
 		generate();
 	}
 
@@ -57,15 +43,9 @@ void Mandelbrot::generate(int numThreads) {
 	int linesPerThread = viewHeight / numThreads;
 	std::vector<std::thread> threads;
 
-	std::cout << " Lines Per Thread: " << linesPerThread << std::endl;
-
-
 	// Clear the Vector
 	data.erase(data.begin(), data.end());
-	for (int i = 0; i < viewHeight; ++i)
-	{
-		data.push_back(std::vector<int>() = {1} );
-	}
+	std::fill_n(std::back_inserter(data), viewHeight, std::vector<int>() = {1});
 
 	// Split up the work for each thread
 	for (int i = numThreads; i > 0; --i) {
@@ -84,8 +64,6 @@ void Mandelbrot::generate(int numThreads) {
 		i.join();
 	}
 
-	std::reverse(data.begin(), data.end());
-	// std::cout << std::endl << std::endl;
 	return;
 }
 
@@ -101,8 +79,8 @@ void Mandelbrot::changeView(double xLow, double yLow, double xHigh, double yHigh
 
 void Mandelbrot::changeView(double xMid, double yMid, double yHeight) {
 
-	xLowerBound = xMid - ((yHeight /*+ (1.0 / 3.0)*/) / 2.0);
-	xUpperBound = xMid + ((yHeight /*+ (1.0 / 3.0)*/) / 2.0);
+	xLowerBound = xMid - (yHeight / 2.0);
+	xUpperBound = xMid + (yHeight / 2.0);
 	yLowerBound = yMid - (yHeight / 2.0);
 	yUpperBound = yMid + (yHeight / 2.0);
 
@@ -158,7 +136,7 @@ void Mandelbrot::generateLines(int topLine, int bottomLine) {
 	std::vector<int> currentLine;
 
 	// Starting from the top, generate lines left to right.
-	for (int i = topLine; i > bottomLine; i--) {
+	for (int i = bottomLine; i < topLine; ++i) {
 
 		// std::cout << i << std::endl;
 
@@ -175,7 +153,6 @@ void Mandelbrot::generateLines(int topLine, int bottomLine) {
 
 		}
 
-
 		save(currentLine, i);
 		currentLine.erase(currentLine.begin(), currentLine.end());
 
@@ -185,8 +162,6 @@ void Mandelbrot::generateLines(int topLine, int bottomLine) {
 }
 
 void Mandelbrot::save(std::vector<int> line, int index) {
-
-	index = index - 1;
 
 	std::lock_guard<std::mutex> lock (dataLock);
 	data.at(index) = (line);

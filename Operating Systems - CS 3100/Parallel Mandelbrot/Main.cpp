@@ -11,7 +11,7 @@
 
 #include "PortablePixMap.hpp"
 #include "Mandelbrot.hpp"
-#include "../Modern C++ Style/CandleStats.hpp"
+#include "CandleStats.hpp"
 
 
 int main() {
@@ -23,23 +23,22 @@ int main() {
 	// myMandelbrot.changeView(-0.6, 0.5, -0.4, 0.7);
 	myMandelbrot.changeView(-0.44005, 0.56, 0.00005);
 
-	myMandelbrot.changeSize(640, 480);
-	myMandelbrot.generate(8);
+	myMandelbrot.changeSize(2880, 1800);
+	// myMandelbrot.generate(4);
 
 	// Begin Tests
-	// for (int i = 1; i <= 50; i++) {
-	// 	myMandelbrot.changeSize((2880 / 100.0) * i, (1800 / 100.0) * i);
+	for (int i = 1; i <= 16; i++) {
+		// myMandelbrot.changeSize((2880 / 100.0) * i, (1800 / 100.0) * i);
 
-	// 	ss << "(" << i << ") " << "Mandelbrot "
-	// 		<< ((2880 / 100.0) * i) << " x " << ((1800 / 100.0) * i);
-	// 	CandleStats myTest(ss.str(),
-	// 		[&](){ myMandelbrot.generate(); },
-	// 		3
-	// 	);
-	// 	myTest.printResults();
-	// 	ss.str("");
+		ss << "(" << i << " core(s)) " << "Mandelbrot";
+		CandleStats myTest(ss.str(),
+			[&](){ myMandelbrot.generate(i); },
+			3
+		);
+		myTest.printResults();
+		ss.str("");
 
-	// }
+	}
 
 	PortablePixMap myPixMap(
 		myMandelbrot.getData(),
