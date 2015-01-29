@@ -2,6 +2,7 @@
 # A01236750
 # Fermat's Primality Test Assignment
 
+import sys;
 import random;
 random.seed();
 
@@ -21,9 +22,9 @@ def isFermatPrime(number, repetitions, test = 2) :
 
 	return False;
 
-print isFermatPrime(9277, 20);
-
 # Find primes in a list of numbers using the Fermat primality test.
+# NOTE: This function must be recursive due to assignment constraints, but since Python doesn't
+#   implement tail recursion this function only natively supports lists of size <= 979
 def findFermatPrimes(numbers, repetitions, test = 2) :
 
 	if (len(numbers) == 0) :
@@ -36,5 +37,4 @@ def findFermatPrimes(numbers, repetitions, test = 2) :
 
 	return findFermatPrimes(numbers, repetitions, test);
 
-print findFermatPrimes([1, 2, 3, 4, 5, 6, 7, 8, 9], 20);
 
