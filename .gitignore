@@ -1,4 +1,12 @@
-*.ova
+# Ignore All Files
+*
+!/*
+
+# Except Git Documentation
+!.gitignore
+
+# But Specifically these Files and Folders
+*.DS_Store
 *ACCT*
 *CS 3000*
 *MATH*

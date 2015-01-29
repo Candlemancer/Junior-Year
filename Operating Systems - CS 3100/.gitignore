@@ -1,0 +1,8 @@
+# Except source files
+!*.cpp
+!*.hpp
+!*.tpp
+
+# And Documentation
+!*.txt
+!makefile
