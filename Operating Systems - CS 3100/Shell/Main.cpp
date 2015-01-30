@@ -4,10 +4,11 @@
 // Driver Code
 
 #include <iostream>
+#include "Shell.hpp"
 
 int main(void) {
 
-	std::cout << "Hello World!" << std::endl;
+	Shell myShell;
 
 	return 0;
 }
