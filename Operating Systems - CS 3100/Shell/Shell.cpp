@@ -4,6 +4,7 @@
 // Shell Class Implementation
 
 #include <regex>
+#include <vector>
 
 #include "Shell.hpp"
 
@@ -53,8 +54,10 @@ void Shell::parseCommand(std::string& commandString) {
 void Shell::runCommand(std::string& command) {
 
 	auto PID = -1;
-	command = "ls";
-	char* args[1];
+	std::vector<char *> commands;
+	std::vector<char> first(command.begin(), command.end());
+	commands.push_back(first.data());
+	char** test = &commands[0];
 
 	// Fork the Process
 	PID = fork();
@@ -65,8 +68,8 @@ void Shell::runCommand(std::string& command) {
 	}
 	// If child execute the command
 	if (PID > 0) {
-		std::cout << " > " << command << std::endl;
-		execvp(command.c_str(), args);
+		std::cout << " > " << command.c_str() << std::endl;
+		execvp(test[0], test);
 
 	}
 	// If error complain
