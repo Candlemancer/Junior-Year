@@ -15,7 +15,7 @@ Shell::Shell(void) {
 
 	std::cout << "[cmd]: ";
 	getCommand(currentLine);
-	// parseCommand(currentLine);
+	parseCommand(currentLine);
 	runCommand(currentLine);
 
 	// delete this;
@@ -32,21 +32,22 @@ void Shell::getCommand(std::string& userInput) {
 
 void Shell::parseCommand(std::string& commandString) {
 
-	std::regex word("(\\w+)( \\w+)*");
-	std::smatch results;
+	// std::regex word("(\\w+)(\\G\\s(\\S+)\\b)*");
+	std::regex word("(\\S+)+");
 
-	auto didMatch = std::regex_search(commandString, results, word);
+	std::regex_iterator<std::string::iterator> currentMatch (
+		commandString.begin(),
+		commandString.end(),
+		word);
 
-	if (didMatch) {
-		for (auto&& i : results) {
-			std::cout << i << std::endl;
-		}
+	std::regex_iterator<std::string::iterator> endMatch;
+
+	while (currentMatch != endMatch) {
+		std::cout << "'" << currentMatch->str().c_str() << "'" << std::endl;
+		currentMatch++;
 	}
-	else {
-		std::cerr << "Could not verify command!" << std::endl;
-	}
 
-
+	return;
 }
 
 
