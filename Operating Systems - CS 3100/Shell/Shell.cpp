@@ -4,6 +4,7 @@
 // Shell Class Implementation
 
 #include <algorithm>
+#include <iostream>
 #include <regex>
 #include <sys/wait.h>
 

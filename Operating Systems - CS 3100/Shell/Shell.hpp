@@ -6,7 +6,6 @@
 #ifndef _SHELL_HPP
 #define _SHELL_HPP
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include <chrono>

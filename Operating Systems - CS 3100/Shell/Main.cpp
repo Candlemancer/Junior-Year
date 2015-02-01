@@ -3,7 +3,6 @@
 // Shell Assignment
 // Driver Code
 
-#include <iostream>
 #include "Shell.hpp"
 
 int main(void) {
