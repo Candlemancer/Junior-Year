@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <chrono>
 
 #include <unistd.h>
 #include <term.h>
@@ -19,9 +20,17 @@ public:
 	Shell(void);
 
 private:
-	void getCommand(std::vector<const char *>& output);
-	void runCommand(std::vector<const char *>& command);
+	void getCommand();
+	void runCommand();
 
+	std::vector<std::string> command;
+	std::vector<std::vector<std::string>> history;
+
+	std::string exitCommand = "exit";
+	std::string timeCommand = "ptime";
+	std::string histCommand = "history";
+	std::string backCommand = "^";
+	std::chrono::duration<double> waitTime;
 
 };
 
