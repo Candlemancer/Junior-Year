@@ -3,37 +3,33 @@
 // Shell Assignment
 // Shell Class Implementation
 
+#include <algorithm>
 #include <regex>
-#include <vector>
 
 #include "Shell.hpp"
 
 // Default Constructor
 Shell::Shell(void) {
 
-	std::string currentLine;
+	std::vector<const char *> commands;
 
 	std::cout << "[cmd]: ";
-	getCommand(currentLine);
-	parseCommand(currentLine);
-	runCommand(currentLine);
+	getCommand(commands);
+	runCommand(commands);
 
 	// delete this;
 	return;
 }
 
 // Read in a line of input from the user.
-void Shell::getCommand(std::string& userInput) {
+void Shell::getCommand(std::vector<const char *>& output) {
 
-	std::getline(std::cin, userInput);
-
-	return;
-}
-
-void Shell::parseCommand(std::string& commandString) {
-
-	// std::regex word("(\\w+)(\\G\\s(\\S+)\\b)*");
+	// Setup the Regular Expression and find matches
+	std::vector<std::string> strings;
 	std::regex word("(\\S+)+");
+	std::string commandString;
+
+	std::getline(std::cin, commandString);
 
 	std::regex_iterator<std::string::iterator> currentMatch (
 		commandString.begin(),
@@ -42,23 +38,28 @@ void Shell::parseCommand(std::string& commandString) {
 
 	std::regex_iterator<std::string::iterator> endMatch;
 
-	while (currentMatch != endMatch) {
-		std::cout << "'" << currentMatch->str().c_str() << "'" << std::endl;
-		currentMatch++;
+	// Add the matches to a vector of strings
+	std::transform(
+		currentMatch,
+		endMatch,
+		back_inserter(strings),
+		[](std::regex_iterator<std::string::iterator>::value_type token) { return token.str(); }
+	);
+
+	for (auto&& i : strings) {
+		output.push_back(i.c_str());
 	}
 
+	output.push_back('\0');
 	return;
 }
 
 
 // Run the command specified in commandString with the remaining arguments
-void Shell::runCommand(std::string& command) {
+void Shell::runCommand(std::vector<const char *>& command) {
 
 	auto PID = -1;
-	std::vector<char *> commands;
-	std::vector<char> first(command.begin(), command.end());
-	commands.push_back(first.data());
-	char** test = &commands[0];
+	char* const* test = const_cast<char* const*>(command.data());
 
 	// Fork the Process
 	PID = fork();
@@ -69,7 +70,7 @@ void Shell::runCommand(std::string& command) {
 	}
 	// If child execute the command
 	if (PID > 0) {
-		std::cout << " > " << command.c_str() << std::endl;
+		// std::cout << " > '" << test[0] << "'" << std::endl;
 		execvp(test[0], test);
 
 	}

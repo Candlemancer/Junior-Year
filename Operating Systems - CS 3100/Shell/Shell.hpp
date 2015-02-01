@@ -7,6 +7,7 @@
 #define _SHELL_HPP
 
 #include <iostream>
+#include <vector>
 #include <string>
 
 #include <unistd.h>
@@ -18,9 +19,8 @@ public:
 	Shell(void);
 
 private:
-	void getCommand(std::string& userInput);
-	void parseCommand(std::string& commandString);
-	void runCommand(std::string& command);
+	void getCommand(std::vector<const char *>& output);
+	void runCommand(std::vector<const char *>& command);
 
 
 };
