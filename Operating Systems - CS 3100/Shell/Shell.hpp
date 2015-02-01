@@ -23,6 +23,12 @@ private:
 	void getCommand();
 	void runCommand();
 
+	char * const * parseCommand();
+	void runHistory();
+
+	void printWaitTime();
+	void printHistory();
+
 	std::vector<std::string> command;
 	std::vector<std::vector<std::string>> history;
 

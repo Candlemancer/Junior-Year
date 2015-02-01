@@ -13,9 +13,6 @@
 Shell::Shell(void) :
 	waitTime() {
 
-	// std::vector<std::vector<char const *> history;
-	// char const * exitCommand = "exit";
-
 	while (true) {
 		std::cout << "[cmd]: ";
 
@@ -26,7 +23,6 @@ Shell::Shell(void) :
 		command.erase(command.begin(), command.end());
 	}
 
-	// delete this;
 	return;
 }
 
@@ -56,11 +52,6 @@ void Shell::getCommand() {
 		[](std::regex_iterator<std::string::iterator>::value_type token) { return token.str(); }
 	);
 
-	// for (auto&& i : strings) { output.push_back(i.c_str()); }
-
-	// execvp expects a null-terminated list of null-terminated strings
-	// command.push_back("\0");
-
 	return;
 }
 
@@ -69,30 +60,17 @@ void Shell::getCommand() {
 void Shell::runCommand() {
 
 	auto PID = -1;
+	auto args = parseCommand();
 
-	// Convert string to c_string
-	std::vector<char const *> test;
-	for (auto&& i : command) {
-		test.push_back(i.c_str());
-	}
-	test.push_back('\0');
-	char * const * args = const_cast<char* const*>(test.data());
-
-	// std::cout << " > '" << args[0] << "'" << std::endl;
-
-	// Check for exit condition
 	if (args[0] == exitCommand) { exit(0); }
-	// std::cout << args[0] << std::endl;
-
-
-	// Fork the Process
 	PID = fork();
 
 	// If error complain
-	if (PID < 0) { std::cerr << "My Head A Splode!" << std::endl; exit(-1); }
+	if (PID < 0) { std::cerr << "Unable to spawn child process!" << std::endl; exit(-1); }
 
-	// If parent (shell) wait for child, and time the wait
+	// If parent (shell) wait for child
 	if (PID > 0) {
+		// Time how long it takes to wait for the child process
 		using std::chrono::system_clock;
 
 		system_clock::time_point start = system_clock::now();
@@ -100,51 +78,88 @@ void Shell::runCommand() {
 		system_clock::time_point stop = system_clock::now();
 
 		waitTime += (stop - start);
+
+		// Replace the ^ commands in the history with the actual command run
+		// This prevents infinite loops by calling ^ on ^ commands.
+		if (args[0] == backCommand) {
+			auto index = atoi(command[1].c_str()) - 1;
+			command = history[index];
+		}
 	}
 
 	// If child execute the command
 	if (PID == 0) {
 
 		// Run our internal commands
-		if (args[0] == timeCommand) { std::cout << waitTime.count() << std::endl; exit(0); }
-		if (args[0] == histCommand) {
-			for (auto&& i: history) {
-				for (auto&& j : i) {
-					std::cout << j << " ";
-				}
-				std::cout << std::endl;
-			}
-			exit(0);
-		}
-		if (args[0] == backCommand) {
-
-			int index = atoi(args[1]) - 1;
-
-		 	// Convert string to c_string
-			std::vector<char const *> test;
-			for (auto&& i : history[index]) {
-				test.push_back(i.c_str());
-			}
-			test.push_back('\0');
-			char * const * args = const_cast<char* const*>(test.data());
-
-			execvp(args[0], args);
-			exit(0);
-		}
-
+		if (args[0] == timeCommand) { printWaitTime(); exit(0); }
+		if (args[0] == histCommand) { printHistory(); exit(0); }
+		if (args[0] == backCommand) { runHistory(); exit(0); }
 
 		// Pass everything else off to the OS
 		execvp(args[0], args);
 		exit(0);
 	}
 
+	return;
+}
+
+// Transform the command into the proper form for execvp.
+char * const * Shell::parseCommand() {
+
+	std::vector<char const *> commandChars;
+
+	for (auto&& i : command) {
+		commandChars.push_back(i.c_str());
+	}
+	// execvp requires a null-terminated list of arguments
+	commandChars.push_back('\0');
+
+	return const_cast<char* const*>(commandChars.data());
+}
+
+// Run a specific command in the history.
+void Shell::runHistory() {
+
+	auto index = atoi(command[1].c_str()) - 1;
+	command = history[index];
+
+	auto args = parseCommand();
+	execvp(args[0], args);
 
 	return;
 }
 
-// void Shell::execute(char * const * command) {
+// Pretty print the waitTime variable.
+void Shell::printWaitTime() {
 
+	using std::chrono::duration_cast;
 
+	auto seconds = duration_cast<std::chrono::seconds> (waitTime);
+	auto milliseconds = duration_cast<std::chrono::milliseconds> (waitTime - seconds);
+	auto microseconds = duration_cast<std::chrono::microseconds> (waitTime - seconds - milliseconds);
 
+	std::cout << "Time spent executing child processes: "
+		<< seconds.count() << " seconds "
+		<< milliseconds.count() << " milliseconds "
+		<< microseconds.count() << " microseconds "
+		<< std::endl;
 
-// }
+	return;
+}
+
+// Show all commands in the history, including the history command.
+void Shell::printHistory() {
+
+	for (auto&& i: history) {
+
+		for (auto&& j : i) {
+			std::cout << j << " ";
+		}
+
+		std::cout << std::endl;
+	}
+	// Fake entry to cover the command calling this function.
+	std::cout << "history" << std::endl;
+
+	return;
+}
