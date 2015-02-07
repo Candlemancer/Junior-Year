@@ -10,7 +10,10 @@ random.seed();
 # primality, since there are numbers that will always fool this test.
 def isFermatPrime(number, repetitions, test = 2) :
 
-	if (number == 1 or number == 2) :
+	if (number == 1) :
+		return False;
+
+	if (number == 2) :
 		return True;
 
 	if (repetitions <= 0) :
