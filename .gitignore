@@ -1,6 +1,6 @@
 # Ignore All Files
 *
-!/*
+!*/
 
 # Except Git Documentation
 !.gitignore
