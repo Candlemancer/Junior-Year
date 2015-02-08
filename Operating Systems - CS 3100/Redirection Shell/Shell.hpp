@@ -37,6 +37,10 @@ private:
 	std::string backCommand = "^";
 	std::chrono::duration<double> waitTime;
 
+	int const static STDIN = 0;
+	int const static STDOUT = 1;
+	int const static STDERR = 2;
+
 };
 
 #endif
