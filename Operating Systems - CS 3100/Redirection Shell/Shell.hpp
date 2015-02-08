@@ -27,6 +27,7 @@ private:
 
 	void printWaitTime();
 	void printHistory();
+	void checkRedirect();
 
 	std::vector<std::string> command;
 	std::vector<std::vector<std::string>> history;

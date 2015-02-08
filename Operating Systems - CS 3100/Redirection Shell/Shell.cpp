@@ -97,49 +97,7 @@ void Shell::runCommand() {
 		if (args[0] == timeCommand) { printWaitTime(); exit(0); }
 		if (args[0] == histCommand) { printHistory(); exit(0); }
 		if (args[0] == backCommand) { runHistory(); exit(0); }
-		for (unsigned int i = 0; i < command.size(); i++) {
-			if (command[i] == ">") {
-				// std::cout << "I found a >!" << std::endl;
-
-				auto fd_out = open(
-					command[i + 1].c_str(),
-					O_WRONLY |
-					O_CREAT |
-					O_TRUNC,
-					// 0666, though by default my process can only grant 0644
-					(S_IRWXU ^ S_IXUSR) |
-					(S_IRWXG ^ S_IXGRP) |
-					S_IROTH
-				);
-
-				if (fd_out > 0) {
-					// std::cout << "And opened a file!" << std::endl;
-					command.erase(command.begin() + i + 1);
-					dup2(fd_out, STDOUT);
-					close(fd_out);
-				}
-				else {
-					std::cout << "Could not open file" << std::endl;
-				}
-
-				command.erase(command.begin() + i);
-			}
-			if(command[i] == "<") {
-
-				auto fd_in = open(command[i + 1].c_str(), O_RDONLY);
-
-				if (fd_in > 0) {
-					command.erase(command.begin() + i + 1);
-					dup2(fd_in, STDIN);
-					close(fd_in);
-				}
-				else {
-					std::cout << "Could not read from file" << std::endl;
-				}
-
-				command.erase(command.begin() + i);
-			}
-		}
+		checkRedirect();
 
 		// Pass everything else off to the OS
 		args = parseCommand();
@@ -207,6 +165,65 @@ void Shell::printHistory() {
 	}
 	// Fake entry to cover the command calling this function.
 	std::cout << "history" << std::endl;
+
+	return;
+}
+
+void Shell::checkRedirect() {
+
+	for (unsigned int i = 0; i < command.size(); i++) {
+
+			if (command[i] == ">") {
+				// std::cout << "I found a >!" << std::endl;
+
+				auto fd_out = open(
+					command[i + 1].c_str(),
+					O_WRONLY |
+					O_CREAT |
+					O_TRUNC,
+					// 0666, though by default my process can only grant 0644
+					(S_IRWXU ^ S_IXUSR) |
+					(S_IRWXG ^ S_IXGRP) |
+					S_IROTH
+				);
+
+				if (fd_out > 0) {
+					// std::cout << "And opened a file!" << std::endl;
+					command.erase(command.begin() + i + 1);
+					dup2(fd_out, STDOUT);
+					close(fd_out);
+				}
+				else {
+					std::cout << "Could not open file" << std::endl;
+				}
+
+				command.erase(command.begin() + i);
+				// Reset the search in case another token is in a lower index.
+				i = 0;
+				continue;
+			}
+
+			if(command[i] == "<") {
+				// std::cout << "I found a <!" << std::endl;
+
+				auto fd_in = open(command[i + 1].c_str(), O_RDONLY);
+
+				if (fd_in > 0) {
+					command.erase(command.begin() + i + 1);
+					dup2(fd_in, STDIN);
+					close(fd_in);
+				}
+				else {
+					std::cout << "Could not read from file" << std::endl;
+				}
+
+				command.erase(command.begin() + i);
+				// Reset the search in case another token is in a lower index.
+				i = 0;
+				continue;
+			}
+
+		}
 
 	return;
 }
