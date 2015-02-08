@@ -3,7 +3,7 @@
 # Shell Assignment
 # Makefile
 
-CC=g++
+CC=g++-4.9
 CFLAGS=-c -std=c++11 -Wall -Wextra -Wpedantic
 LDFLAGS=
 SOURCES=Main.cpp Shell.cpp
