@@ -1,5 +1,73 @@
-% Don't forget to document your code - brief description, inputs, outputs, and example usage
-/ackermann 
+%!
+
+% Jonathan Petersen
+% A01236750
+% Postscript Assignment
+% Ackermann Operator
+
+% NAME
+% 	ackermann - Ackermann Operator
+%
+% SYNOPSIS
+% 	[M] [N] ackermann
+%
+% DESCRIPTION
+% 	Returns the result of applying Ackermann's function to N and M.
+%
+%	Ackermann's function is defined as follows:
+%	Given N, M as positive integers,
+%	if M = 0: return N + 1
+%	if N = 0 and M > 0: return (M - 1) 1 ackermann
+%	else: return (M - 1) ( (M) (N - 1) ackermann ) ackermann
+%
+%	This function is implemented recursively.
+%
+% EXAMPLES
+%	0 0 ackermann
+%	3 1 ackermann
+%
+
+/ackermann
 {
-  % todo
+
+	% Note: This isn't actually a loop. It just lets me exit the proceedure early.
+	{
+		% Base Case (M == 0)
+		1 index
+		0 eq
+			{
+				1 add
+				2 1 roll
+				pop
+				exit
+			}
+		if
+
+		% Simple Recursive Case (N == 0)
+		1 copy
+		0 eq
+			{
+				pop
+				1
+				2 1 roll
+				1 sub
+				2 1 roll
+				ackermann
+				exit
+			}
+		if
+
+		% Complex Recursive Case (N, M > 0)
+		1 sub
+		1 index
+		2 1 roll
+		ackermann
+		2 1 roll
+		1 sub
+		2 1 roll
+		ackermann
+
+		exit
+	} loop
+
 } def
