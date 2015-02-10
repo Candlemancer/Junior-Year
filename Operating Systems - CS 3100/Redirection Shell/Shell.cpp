@@ -20,10 +20,20 @@ Shell::Shell(void) :
 		std::cout << "[cmd]: ";
 
 		getCommand();
-		runCommand();
 
-		history.push_back(command);
-		command.erase(command.begin(), command.end());
+		checkPipes();
+		pipeOutput.erase(pipeOutput.begin(), pipeOutput.end());
+		for (auto&& i : compoundCommand) {
+
+			command = i;
+			compoundCommand.erase(compoundCommand.begin());
+			runCommand();
+			if (command[0] != "") { history.push_back(command); }
+			command.erase(command.begin(), command.end());
+
+		}
+
+		compoundCommand.erase(compoundCommand.begin(), compoundCommand.end());
 	}
 
 	return;
@@ -63,9 +73,16 @@ void Shell::getCommand() {
 void Shell::runCommand() {
 
 	auto PID = -1;
-	auto args = parseCommand();
+	int toParent[2];
+	int toChild[2];
 
-	if (args[0] == exitCommand) { exit(0); }
+	if ( pipe(toParent) ) { std::cout << "Could not open a pipe" << std::endl; }
+	if ( pipe(toChild) ) { std::cout << "Could not open a pipe" << std::endl; }
+
+	if (command[0] == exitCommand) { exit(0); }
+	if (command[0] == backCommand) { runHistory(); }
+	if (command[0] == "") { return; }
+
 	PID = fork();
 
 	// If error complain
@@ -73,6 +90,20 @@ void Shell::runCommand() {
 
 	// If parent (shell) wait for child
 	if (PID > 0) {
+
+		// char readbuf[999999];
+		// int numRead = 0;
+
+		// Close the pipes we don't use
+		close(toParent[PIPE_WRITE]);
+		close(toChild[PIPE_READ]);
+
+		if (pipeOutput.size() > 0) { write(toChild[PIPE_WRITE], &pipeOutput[0], pipeOutput.size()); }
+
+		close(toChild[PIPE_WRITE]);
+		pipeOutput.erase(pipeOutput.begin(), pipeOutput.end());
+		// std::cout << "String Size: " << pipeOutput.size() << std::endl;
+
 		// Time how long it takes to wait for the child process
 		using std::chrono::system_clock;
 
@@ -82,25 +113,51 @@ void Shell::runCommand() {
 
 		waitTime += (stop - start);
 
-		// Replace the ^ commands in the history with the actual command run
-		// This prevents infinite loops by calling ^ on ^ commands.
-		if (args[0] == backCommand) {
-			auto index = atoi(command[1].c_str()) - 1;
-			command = history[index];
-		}
+		// Read Child's STDOUT into pipeOutput
+		pipeOutput.resize(999999);
+		// numRead =
+		read(toParent[PIPE_READ], &pipeOutput[0], 999999);
+		// std::cout << "Bytes Read: " << numRead << std::endl;
+		// std::cout << "First character: " << pipeOutput[0] << std::endl;
+		// std::cout << "String Size: " << pipeOutput.size() << std::endl;
+		// pipeOutput.append('\0');
+		// pipeOutput[numRead] = '\0';
+
+		close(toParent[PIPE_READ]);
+		std::cout << " > '" << pipeOutput << "'" << std::endl;
+
+		return;
 	}
 
 	// If child execute the command
 	if (PID == 0) {
+		// Close the pipes we don't use
+		close(toParent[PIPE_READ]);
+		close(toChild[PIPE_WRITE]);
+
+		// std::cout << compoundCommand.size() << std::endl;
+		if (compoundCommand.size() > 0) {
+
+			std::cout << "Duping Child STDOUT to Parent." << std::endl;
+			dup2(toParent[PIPE_WRITE], STDOUT);
+
+		}
+		if (pipeOutput.size() > 0) {
+			std::cout << "Duping Child STDIN to Parent." << std::endl;
+			dup2(toChild[PIPE_READ], STDIN);
+		}
+
+		close(toParent[PIPE_WRITE]);
+		close(toChild[PIPE_READ]);
 
 		// Run our internal commands
-		if (args[0] == timeCommand) { printWaitTime(); exit(0); }
-		if (args[0] == histCommand) { printHistory(); exit(0); }
-		if (args[0] == backCommand) { runHistory(); exit(0); }
 		checkRedirect();
+		if (command[0] == timeCommand) { printWaitTime(); exit(0); }
+		if (command[0] == histCommand) { printHistory(); exit(0); }
+		// if (args[0] == backCommand) { runHistory(); /*exit(0);*/ }
 
 		// Pass everything else off to the OS
-		args = parseCommand();
+		auto args = parseCommand();
 		execvp(args[0], args);
 		exit(0);
 	}
@@ -123,14 +180,18 @@ char * const * Shell::parseCommand() {
 }
 
 // Run a specific command in the history.
+// Replace the ^ commands in the history with the actual command run
+// This prevents infinite loops by calling ^ on ^ commands.
 void Shell::runHistory() {
 
-	auto index = atoi(command[1].c_str()) - 1;
+	auto index = 0u;
+
+	try { index = stoi(command[1]); }
+	catch (std::exception e) { index = 0; }
+
+	if (index > history.size() || index == 0) { command[0] = ""; return; }
+
 	command = history[index];
-
-	auto args = parseCommand();
-	execvp(args[0], args);
-
 	return;
 }
 
@@ -194,7 +255,7 @@ void Shell::checkRedirect() {
 					close(fd_out);
 				}
 				else {
-					std::cout << "Could not open file" << std::endl;
+					// std::cout << "Could not open file" << std::endl;
 				}
 
 				command.erase(command.begin() + i);
@@ -224,6 +285,33 @@ void Shell::checkRedirect() {
 			}
 
 		}
+
+	return;
+}
+
+void Shell::checkPipes() {
+
+	for (unsigned int i = 0; i < command.size(); i++) {
+
+		if (command[i] == "|") {
+			// std::cout << "Found | at " << i << std::endl;
+			std::vector<std::string> temp = command;
+			temp.erase(temp.begin() + i, temp.end());
+			compoundCommand.push_back(temp);
+			command.erase(command.begin(), command.begin() + i + 1);
+			i = 0;
+		}
+
+	}
+
+	if (compoundCommand.size() > 0) {
+		compoundCommand.push_back(command);
+		command.erase(command.begin(), command.end());
+		command.push_back("");
+	}
+	else {
+		compoundCommand.push_back(command);
+	}
 
 	return;
 }
