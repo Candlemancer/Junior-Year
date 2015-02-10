@@ -1,5 +1,74 @@
-% Don't forget to document your code - brief description, inputs, outputs, and example usage
-/fractal 
-{ 
+%!
+
+% Jonathan Petersen
+% A01236750
+% Postscript Assignment
+% Ternary Operator
+
+% NAME
+% 	fractal - Fractal Tree Generator
+%
+% SYNOPSIS
+% 	[Depth] fractal
+%
+% DESCRIPTION
+% 	Draws a fractal tree of depth Depth.
+%
+% EXAMPLES
+%	8 fractal
+%	2 fractal
+%
+
+/fractal
+{
+
+	% NOTE: This loop doesn't actually loop, it's just here so I can use exit to move around.
+	{
+		% Base Case (Depth == 0)
+		dup 0 le
+			{ pop exit }
+		if
+
+		% Simple Case (Depth == 1)
+		dup 1 eq
+			{
+				0 50 rlineto
+				1 sub fractal
+				exit
+			}
+		if
+
+		% Complex Case (Depth > 1)
+
+		dup 1 sub fractal
+
+		gsave
+
+		20 rotate
+		0.9 0.7 scale
+		dup 1 sub fractal
+		stroke
+
+		grestore
+
+		gsave
+
+		-16 rotate
+		0.9 0.9 scale
+		dup 1 sub fractal
+		stroke
+
+		grestore
+
+		gsave
+
+		0.7 0.7 scale
+		dup 1 sub fractal
+		stroke
+
+		grestore
+
+		pop exit
+	} loop
 
 } def
