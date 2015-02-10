@@ -93,23 +93,15 @@ void Shell::runCommand() {
 	// If parent (shell) wait for child
 	if (PID > 0) {
 
-		// std::cout << "========" << PID << "========" << std::endl;
-		char readbuf;
-		int num = 0;
-
 		// Close the pipes we don't use
 		close(toParent[PIPE_WRITE]);
 		close(toChild[PIPE_READ]);
 		close(parentFlag[PIPE_WRITE]);
 
+		// Wait for the child to tell us if we need to send pipeOutput for STDIN
+		char readbuf;
 		read(parentFlag[PIPE_READ], &readbuf, 1);
-		if (pipeOutput.size() > 0) {
-			// sleep(1);
-			// std::cout << "~~~~~~~~" << PID << "~~~~~~~~" << std::endl;
-			write(toChild[PIPE_WRITE], &pipeOutput[0], pipeOutput.size());
-			// write(toChild[PIPE_WRITE], "Hello, My Son.", 15);
-			// std::cout << "~~~~~~~~" << PID << "~~~~~~~~" << std::endl;
-		}
+		if(pipeOutput.size() > 0) { write(toChild[PIPE_WRITE], &pipeOutput[0], pipeOutput.size()); }
 
 		close(parentFlag[PIPE_READ]);
 		close(toChild[PIPE_WRITE]);
@@ -124,44 +116,26 @@ void Shell::runCommand() {
 
 		waitTime += (stop - start);
 
-
-
 		// Read Child's STDOUT into pipeOutput
+		int num = 0;
 		pipeOutput.resize(999999);
 		num = read(toParent[PIPE_READ], &pipeOutput[0], 999999);
 		pipeOutput.resize(num + 1);
-
-		// std::cout << "Bytes Read: " << numRead << std::endl;
-		// std::cout << "First character: " << pipeOutput[0] << std::endl;
-		// std::cout << "String Size: " << pipeOutput.size() << std::endl;
-
 		close(toParent[PIPE_READ]);
-		// std::cout << pipeOutput << std::endl;
-		// std::cout << "========" << PID << "========" << std::endl;
 
 		return;
 	}
 
 	// If child execute the command
 	if (PID == 0) {
-		// std::cout << "----------------" << std::endl;
+
 		// Close the pipes we don't use
 		close(toParent[PIPE_READ]);
 		close(toChild[PIPE_WRITE]);
 		close(parentFlag[PIPE_READ]);
 
-		// std::cout << compoundCommand.size() << std::endl;
-		if (compoundCommand.size() > 0) {
-
-			// std::cout << "Duping Child STDOUT to Parent." << std::endl;
-			dup2(toParent[PIPE_WRITE], STDOUT);
-
-		}
-		if (pipeOutput.size() > 0) {
-			// std::cout << "Duping Child STDIN to Parent." << std::endl;
-			dup2(toChild[PIPE_READ], STDIN);
-
-		}
+		if (compoundCommand.size() > 0) { dup2(toParent[PIPE_WRITE], STDOUT); }
+		if (pipeOutput.size() > 0) { dup2(toChild[PIPE_READ], STDIN); }
 
 		write(parentFlag[PIPE_WRITE], "1", 1);
 		close(parentFlag[PIPE_WRITE]);
@@ -172,14 +146,11 @@ void Shell::runCommand() {
 		checkRedirect();
 		if (command[0] == timeCommand) { printWaitTime(); exit(0); }
 		if (command[0] == histCommand) { printHistory(); exit(0); }
-		// if (args[0] == backCommand) { runHistory(); /*exit(0);*/ }
 
 		// Pass everything else off to the OS
 		auto args = parseCommand();
-		// std::cout << "----------------" << std::endl;
-		// std::cout << args[1] << std::endl;
 		execvp(args[0], args);
-		// exit(0);
+		exit(0);
 	}
 
 

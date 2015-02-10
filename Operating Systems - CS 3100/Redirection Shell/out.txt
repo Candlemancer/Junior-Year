@@ -1,3 +1,0 @@
--rw-r--r--@  1 candlemancer  staff    6148 Feb  9 19:06 .DS_Store
--rwxr-xr-x   1 candlemancer  staff  882900 Feb  9 19:09 RedirectionShell
--rw-rw-r--   1 candlemancer  staff    8300 Feb  9 19:08 Shell.cpp
