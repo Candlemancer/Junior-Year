@@ -1,14 +1,14 @@
 # Jonathan Petersen
 # A01236750
-# Shell Assignment
+# RedirectionShell Assignment
 # Makefile
 
-CC=g++-4.9
+CC=g++
 CFLAGS=-c -std=c++11 -Wall -Wextra -Wpedantic
 LDFLAGS=
 SOURCES=Main.cpp Shell.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=Shell
+EXECUTABLE=RedirectionShell
 
 all: prepare $(SOURCES) $(EXECUTABLE) cleanup
 

@@ -1,9 +1,9 @@
 NAME
-	Shell
+	Redirection Shell
 
 USAGE
 	1. make -f makefile
-	2. ./Shell
+	2. ./RedirectionShell
 
 DESCRIPTION
 	Creates a basic user interface shell. Commands are as follows:
@@ -11,6 +11,11 @@ DESCRIPTION
 		ptime - returns the amount of time spent waiting for child processes.
 		history - prints a list of commands used in the order they were used.
 		^ [number] - executes the command of index [number] from the history.
+
+		[command] < [file] - Runs [command] with the contents of [file] as STDIN.
+		[command] > [file] - Runs [command] and saves the output of STDOUT to [file].
+		[command] | [command] - Runs the second command with STDIN given by the first
+								command's STDOUT.
 
 	Any other command is passed to the host shell for execution.
 
