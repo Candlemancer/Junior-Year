@@ -3,6 +3,7 @@
 # Diagonal Pygame Assignment
 
 import pygame;
+import random;
 from pygame.locals import *;
 from sys import exit;
 
@@ -36,6 +37,14 @@ fp_backgroundImage = pygame.transform.scale(fp_backgroundImage, (640, 480));
 
 x = 0;
 y = 0;
+A = [];
+
+# for i in range(1, 100) :
+# 	A.append((
+# 		random.randint(0, screenWidth), 
+# 		random.randint(0, screenHeight),
+# 		random.randint(1, 4)
+# 	));
 
 # Start the game loop
 shouldExit = False;
@@ -47,6 +56,7 @@ while (shouldExit != True) :
 			del fp_backgroundImage;
 			del fp_spriteImage;
 			shouldExit = True;
+			exit(0);
 
 	# Refresh the background image
 	screen.blit(fp_backgroundImage, (0, 0));
@@ -54,7 +64,19 @@ while (shouldExit != True) :
 	# Update the Sprite
 	x += 1;
 	y += 1;
-	screen.blit(fp_spriteImage, (x, y));
+
+	# screen.blit(fp_spriteImage, (x, y));
+	for location in A :
+		screen.blit(fp_spriteImage, (
+			(location[0] + x * location[2]) % screenWidth, 
+			(location[1] + y * location[2]) % screenHeight)
+		);
+
+	A.append((
+		random.randint(0, screenWidth), 
+		random.randint(0, screenHeight),
+		random.randint(1, 4),
+	));
 
 	pygame.display.update();
 	
