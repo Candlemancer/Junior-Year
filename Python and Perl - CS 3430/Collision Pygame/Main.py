@@ -3,3 +3,6 @@
 # Collision Pygame Assignment
 # Driver Code
 
+import Collision;
+
+game = Collision.Collision();
