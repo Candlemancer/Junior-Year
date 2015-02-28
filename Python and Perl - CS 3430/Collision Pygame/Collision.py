@@ -8,6 +8,7 @@ from pygame.locals import *;
 from sys import exit;
 
 import Mom;
+import Son;
 
 class Collision:
 
@@ -15,8 +16,11 @@ class Collision:
 	def __init__(self):
 		pygame.init();
 		pygame.display.set_caption("Collision Pygame");
+		pygame.font.init();
+		self.textFont = pygame.font.Font(None, 24);
 
 		self.displaySetup();
+		self.player = Son.Son();
 		self.moms = [ Mom.Mom() for i in xrange(3) ];
 
 		self.gameLoop();
@@ -36,22 +40,48 @@ class Collision:
 			(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 		);
 
-		self.fp_playerSprite = pygame.image.load(self.fp_playerSprite).convert_alpha();
-
 		return;
 
 	def gameLoop(self):
 		while (True):
 			self.checkEvents();
+			self.checkCollisions();
 			self.updateScreen();
 
 		return;
 
 
 	def checkEvents(self):
+		currentKey = pygame.key.get_pressed();
+		if currentKey[K_UP]:
+			self.player.moveUp();
+		if currentKey[K_DOWN]:
+			self.player.moveDown();
+		if currentKey[K_LEFT]:
+			self.player.moveLeft();
+		if currentKey[K_RIGHT]:
+			self.player.moveRight();
 		for event in pygame.event.get():
 			if (event.type == QUIT):
 				exit(0);
+
+
+		return;
+
+
+	def checkCollisions(self):
+		for mom in self.moms: 
+			if (
+				pygame.Rect(self.player.getCollisionBox())
+				.colliderect(pygame.Rect(mom.getCollisionBox())) and
+				self.hitCooldown == 0
+			):
+				self.hits += 1;
+				self.hitCooldown = 45;
+				mom.reverseDirection();
+
+		if (self.hitCooldown > 0):
+			self.hitCooldown -= 1;
 
 		return;
 
@@ -59,15 +89,24 @@ class Collision:
 	def updateScreen(self):
 		self.screen.blit(self.fp_backgroundImage, (0, 0));
 
-		self.updatePlayer();
 		self.updateEnemy();
+		self.updatePlayer();
+		self.updateCounter();
 
 		pygame.display.update();
 		return;
 
 
+	def updateCounter(self):
+		text = self.textFont.render("Hits: " + str(self.hits), 1, (10, 10, 10));
+		self.screen.blit(text, (self.SCREEN_WIDTH / 2 - text.get_width() / 2, 0));
+
+		print "~~~~~~~~~"
+		return;
+
+
 	def updatePlayer(self):
-		self.screen.blit(self.fp_playerSprite, (self.playerX, self.playerY));
+		self.screen.blit(self.player.currentSprite, (self.player.sonX, self.player.sonY));
 
 		return;
 
@@ -81,7 +120,6 @@ class Collision:
 
 
 	fp_backgroundImage = "field.jpg";
-	fp_playerSprite = "ChildForward.png";
 
 	SCREEN_WIDTH = 640;
 	SCREEN_HEIGHT = 480;
@@ -94,8 +132,12 @@ class Collision:
 	BIT_DEPTH = 32;
 	screen = 0;
 
-	playerX = 0;
-	playerY = 0;
+	textFont = None;
 
 	moms = [];
+	player = None;
+
+	hits = 0;
+	hitCooldown = 45;
+
 

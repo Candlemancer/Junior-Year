@@ -1,4 +1,4 @@
-# Jonathan Petersen
+# Jonathan  * (7 / 8)Petersen
 # A01236750
 # Collision Pygame Assignment
 # Driver Code
