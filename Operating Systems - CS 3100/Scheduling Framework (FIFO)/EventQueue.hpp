@@ -23,8 +23,11 @@ public:
 
 	// Member Functions
 	void update();
-	void pushReadyQueue(step);
-	step popReadyQueue();
+	void pushReadyQueue(step item);
+	void popReadyQueue(double currentTime);
+	void pushIOQueue(int id, step item);
+	void popIOQueue(int id, double currentTime);
+	void completeStep(step item, double currentTime);
 	void printQueue();
 private:
 	// Member Data

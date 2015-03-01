@@ -14,6 +14,7 @@ int main() {
 	// Task myTask;
 	// Device myDevice;
 	// Device yourDevice(2, 4);
+	// EventQueue myEventQueue;
 	EventQueue myEventQueue(2);
 
 	// myTask.printTask();
