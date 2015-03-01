@@ -15,7 +15,7 @@ int main() {
 	// Device myDevice;
 	// Device yourDevice(2, 4);
 	// EventQueue myEventQueue;
-	EventQueue myEventQueue(2);
+	EventQueue myEventQueue(3);
 
 	// myTask.printTask();
 	// std::cout << myDevice.getNumCPUs() << std::endl;

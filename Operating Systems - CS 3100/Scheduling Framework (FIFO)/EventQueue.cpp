@@ -24,7 +24,14 @@ EventQueue::EventQueue(int numTasks) {
 		events.push(std::make_tuple(0.0, i, -100, 0.1));
 	}
 	
+	// auto totalTasks = 0u;
+	// for (auto&& tl : allTasks){
+		// totalTasks += tl.size();
+		// totalTasks++;
+	// }
+	// totalTasks += 10;
 
+	events.push(std::make_tuple(999999.1, -1, -100, 0.0));
 	rqueue = std::unique_ptr<ReadyQueue>(new FIFOQueue());
 	update();
 	
@@ -32,16 +39,13 @@ EventQueue::EventQueue(int numTasks) {
 
 void EventQueue::update() {
 
-	auto totalTasks = 0u;
-	for (auto&& tl : allTasks){
-		totalTasks += tl.size();
-	}
-	
 	// std::cout << totalTasks << std::endl;
 	// std::cout << "--------------------" << std::endl;
 
-	for (unsigned int i = 0; i < totalTasks; ++i) {
-	
+	// for (unsigned int i = 0; i < totalTasks ; ++i) {
+	while (std::get<0>(events.top()) <= 999999.0) {
+		// std::cout << events.size() << std::endl;
+		// if (events.empty()) {std::cout << "Hello World" << std::endl;}
 		// Read the top event
 		auto ev = events.top();
 		events.pop();
@@ -58,7 +62,7 @@ void EventQueue::update() {
 			if (std::get<2>(ev) >= 0) {
 				popIOQueue(-std::get<2>(ev), std::get<0>(ev));
 			}
-			totalTasks++;
+			// totalTasks++;
 			continue;
 		}
 
@@ -82,9 +86,11 @@ void EventQueue::update() {
 
 	}
 
-	std::cout << std::get<0>(events.top()) << "ms" << " - " << 
-	"Task " << std::get<1>(events.top()) << ": "  << 
-	"(Dev: " << std::get<2>(events.top()) << ", Dur: " << std::get<3>(events.top()) << ")" << std::endl;
+	std::cout << "-------------------------------" << std::endl;
+	// std::cout << std::get<0>(events.top()) << "ms" << " - " << 
+	// "Task " << std::get<1>(events.top()) << ": "  << 
+	// "(Dev: " << std::get<2>(events.top()) << ", Dur: " << std::get<3>(events.top()) << ")" << std::endl;
+	printQueue();
 
 }
 
@@ -122,12 +128,13 @@ void EventQueue::pushIOQueue(int id, step item) {
 	device.pushIO(id, item);
 
 	if (device.getIOSize(id) == 1) {
-		events.push(std::make_tuple(
-			std::get<0>(item) + std::get<3>(item),
-			std::get<1>(item),
-			-id,
-			-1.0
-		));
+		// events.push(std::make_tuple(
+		// 	std::get<0>(item) + std::get<3>(item),
+		// 	std::get<1>(item),
+		// 	-id,
+		// 	-1.0
+		// ));
+		popIOQueue(id, std::get<0>(item));
 		return;
 	}
 
@@ -156,8 +163,16 @@ void EventQueue::popIOQueue(int id, double currentTime) {
 void EventQueue::completeStep(step item, double currentTime) {
 
 	// Retrieve the next event.
+	if (allTasks[std::get<1>(item)].size() == 0) { return; }
 	auto nextTask = allTasks[std::get<1>(item)].pop();
 
+	// if (std::get<0>(nextTask) == std::get<2>(item)) {std::cerr << "Same Device!" << std::endl; return;}
+	// std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+	// 	std::cout << "(Dev: " << std::get<0>(nextTask) << ", Dur: " << std::get<1>(nextTask) << ")" << std::endl;
+	// 	std::cout << std::get<0>(item) << "ms" << " - " << 
+	// 		"Task " << std::get<1>(item) << ": "  << 
+	// 		"(Dev: " << std::get<2>(item) << ", Dur: " << std::get<3>(item) << ")" << std::endl;
+	// std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
 	// if (std::get<2>(item) == -1) {
 	// 	popReadyQueue(currentTime);
 	// }

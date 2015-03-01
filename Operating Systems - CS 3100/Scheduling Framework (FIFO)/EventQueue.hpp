@@ -31,6 +31,7 @@ public:
 	void printQueue();
 private:
 	// Member Data
+	// unsigned int totalTasks = 0u;
 	std::priority_queue<step, std::vector<step>, std::greater<step>> events;
 	std::vector<Task> allTasks;
 	Device device;
