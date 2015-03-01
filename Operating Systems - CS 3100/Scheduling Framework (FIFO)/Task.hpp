@@ -22,9 +22,11 @@ public:
 		double stdDevCPU = 0.0, 
 		double meanIO = 50.0, 
 		double stdDevIO = 0.0);
-	
+
 	void printTask();
-	std::vector<std::tuple<int, double>> getTask() {return taskList;}
+	std::tuple<int, double> pop();
+	unsigned int size() { return taskList.size(); }
+	std::vector<std::tuple<int, double>> getTasks() {return taskList;}
 
 private:
 	// Member Variables

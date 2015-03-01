@@ -55,7 +55,7 @@ void Task::generate(double meanCPU, double stdDevCPU, double meanIO, double stdD
 	auto timeIO = std::bind(distIO, generator);
 
 	// Create number of tasks
-	std::uniform_int_distribution<int> numTasks (1, 100);
+	std::uniform_int_distribution<int> numTasks (1, 10);
 
 	// Create First CPU Task
 	taskList.push_back(std::make_tuple(CPU, fabs(timeCPU())));
@@ -89,4 +89,11 @@ void Task::printTask() {
 	}
 
 	return;
+}
+
+std::tuple<int, double> Task::pop() {
+	auto popped = taskList.front();
+	taskList.erase(taskList.begin());
+
+	return popped;
 }
