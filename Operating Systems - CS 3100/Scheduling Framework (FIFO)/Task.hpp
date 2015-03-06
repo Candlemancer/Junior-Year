@@ -13,11 +13,13 @@
 class Task{
 public:
 	// Constructors
-	Task();
-	Task(bool ioBound);
+	// Task();
+	Task(double mixRate, int numIOs);
 
 	// Member Functions
 	void generate(
+		double mixRate,
+		int numIOs,
 		double meanCPU = 50.0, 
 		double stdDevCPU = 0.0, 
 		double meanIO = 50.0, 
