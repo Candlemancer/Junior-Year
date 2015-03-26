@@ -14,12 +14,21 @@
 #include "Device.hpp"
 #include "ReadyQueue.hpp"
 
+// <Event Time, Task, Device, Running Time>
 typedef std::tuple<double, int, int, double> step;
 
 class EventQueue {
 public:
 	// Constructors
-	EventQueue(double frequency, double mixRate, double contextCost, int numCPUs, int numIOs);
+	EventQueue(
+		double frequency, 
+		double mixRate, 
+		double contextCost, 
+		int numCPUs, 
+		int numIOs, 
+		int algorithm,
+		double quantumSize
+	);
 
 	// Member Functions
 	void generateTasks(double frequency, double mixRate, int numIOs);
@@ -60,6 +69,7 @@ private:
 
 	std::vector<double> latency;
 	std::vector<double> utilization;
+	std::vector<double> responses;
 
 };
 

@@ -1,0 +1,5 @@
+Edge Detection Wikipedia - http://en.wikipedia.org/wiki/Edge_detection
+Blur Detection for Digital Images Using Wavelet Transform - https://www.cs.cmu.edu/~htong/pdf/ICME04_tong.pdf
+Is there a way to detect if an image is blurry? - http://stackoverflow.com/questions/7765810/is-there-a-way-to-detect-if-an-image-is-blurry
+Perceptual blur and ringing metrics: application to JPEG2000 - http://infoscience.epfl.ch/record/87134/files/Marziliano2004_1097.pdf
+Basic Methods for Image Restoration and Identification - http://www-inst.eecs.berkeley.edu/~ee225b/sp07/handouts/Image_Restoration_99.pdf

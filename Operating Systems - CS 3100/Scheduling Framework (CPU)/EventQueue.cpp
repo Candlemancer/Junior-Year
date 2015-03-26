@@ -10,13 +10,18 @@
 #include "CandleStats.hpp"
 
 #include "FIFOQueue.hpp"
+#include "RoundRobinQueue.hpp"
+#include "ShortestJobQueue.hpp"
+#include "ApproxShortestQueue.hpp"
 
 EventQueue::EventQueue(
 	double frequency, 
 	double mixRate, 
 	double contextCost, 
 	int numCPUs, 
-	int numIOs) :
+	int numIOs,
+	int algorithm,
+	double quantumSize) :
 	contextSwitchCost(contextCost),
 	resourcesUsed(0),
 	totalResources(numCPUs + numIOs),
@@ -27,7 +32,26 @@ EventQueue::EventQueue(
 
 	// Create a Terminate Event
 	events.push(std::make_tuple(runningTime + 1, -1, -100, 0.0));
-	rqueue = std::unique_ptr<ReadyQueue>(new FIFOQueue());
+	rqueue = std::unique_ptr<ReadyQueue>();
+
+	switch (algorithm) {
+		case 1:
+			rqueue = std::unique_ptr<ReadyQueue>(new FIFOQueue());
+			break;
+		case 2:
+			rqueue = std::unique_ptr<ReadyQueue>(new RoundRobinQueue(quantumSize));
+			break;
+		case 3:
+			rqueue = std::unique_ptr<ReadyQueue>(new ShortestJobQueue());
+			break;
+		case 4:
+			rqueue = std::unique_ptr<ReadyQueue>(new ApproxShortestQueue());
+			break;
+		default:
+			rqueue = std::unique_ptr<ReadyQueue>(new FIFOQueue());
+	}
+
+
 	update();
 	
 }
@@ -39,7 +63,7 @@ void EventQueue::generateTasks(double frequency, double mixRate, int numIOs) {
 
 	std::fill_n(back_inserter(taskStartTimes), numTasks, -1.0);
 	std::fill_n(back_inserter(taskResponseTimes), numTasks, -1.0);
-	std::fill_n(back_inserter(taskFinishTimes), numTasks, -1.0);
+	std::fill_n(back_inserter(taskFinishTimes), numTasks, runningTime);
 
 
 	std::generate_n(back_inserter(allTasks), numTasks, [&](){ return Task(mixRate, numIOs); });
@@ -55,7 +79,7 @@ void EventQueue::generateTasks(double frequency, double mixRate, int numIOs) {
 	// Create Start Events for all the tasks.
 	for (unsigned int i = 0; i < allTasks.size(); ++i) {
 		events.push(std::make_tuple(i * frequency, i, -100, 0.1));
-		taskStartTimes.at(i) = i * frequency;
+		taskStartTimes[i] = i * frequency;
 	}
 
 	return;
@@ -68,7 +92,9 @@ void EventQueue::update() {
 		// Read the top event
 		auto ev = events.top();
 		events.pop();
-		taskFinishTimes.at(std::get<1>(ev)) = std::get<0>(ev);
+		if (std::get<3>(ev) <= 0 && taskFinishTimes.at(std::get<1>(ev)) == runningTime) {
+			taskFinishTimes.at(std::get<1>(ev)) = std::get<0>(ev);
+		}
 		calculateUtilization();
 
 		// std::cout << std::get<0>(ev) << "ms" << " - " << 
@@ -126,7 +152,8 @@ void EventQueue::pushReadyQueue(step item) {
 		return;
 	}
 
-	// std::cout << "	Task " << std::get<1>(item) << " waiting for free CPU. Time: " << std::get<0>(item) << std::endl;
+	// std::cout << "	Task " << std::get<1>(item) << 
+	// " waiting for free CPU. Time: " << std::get<0>(item) << std::endl;
 
 	return;
 }
@@ -139,12 +166,31 @@ void EventQueue::popReadyQueue(double currentTime) {
 
 	device.useCPU();
 	resourcesUsed++;
+
+	// if (std::get<0>(item) + std::get<3>(item) <= currentTime) {
+	
+	// 	// Push the terminate event onto the Event queue
+	// 	events.push(std::make_tuple(
+	// 		currentTime + std::get<3>(item) + contextSwitchCost,
+	// 		std::get<1>(item),
+	// 		std::get<2>(item),
+	// 		-1.0
+	// 	));
+
+	// }
+	// else {
+
+	// Push another pop event onto the Event queue
 	events.push(std::make_tuple(
 		currentTime + std::get<3>(item) + contextSwitchCost,
 		std::get<1>(item),
-		-1,
+		std::get<2>(item),
 		-1.0
 	));
+
+	// }
+
+
 	completeStep(item, currentTime);
 	return;
 }
@@ -158,7 +204,8 @@ void EventQueue::pushIOQueue(int id, step item) {
 		return;
 	}
 
-	// std::cout << "	Task " << std::get<1>(item) << " waiting for IO Device " << id << ". Time: " << std::get<0>(item) << std::endl;
+	// std::cout << "	Task " << std::get<1>(item) << " waiting for IO Device " << 
+	// id << ". Time: " << std::get<0>(item) << std::endl;
 
 	return;
 }
@@ -169,7 +216,8 @@ void EventQueue::popIOQueue(int id, double currentTime) {
 	// If Queue is empty
 	if (std::get<1>(item) == -1) { return; }
 
-	// std::cout << "There are " << device.getIOSize(id) << " steps waiting on IO Device " << id << "." << std::endl;
+	// std::cout << "There are " << device.getIOSize(id) << 
+	// " steps waiting on IO Device " << id << "." << std::endl;
 	events.push(std::make_tuple(
 		currentTime + std::get<3>(item) + contextSwitchCost,
 		std::get<1>(item),
@@ -200,6 +248,8 @@ void EventQueue::computeLatency() {
 
 	for (unsigned int i = 0; i < taskStartTimes.size(); ++i) {
 		latency.push_back(taskFinishTimes[i] - taskStartTimes[i]);
+		responses.push_back(taskResponseTimes[i] - taskStartTimes[i]);
+		// std::cout << taskStartTimes[i] << " - " << taskFinishTimes[i] << " = " << latency[i] << " " << std::endl;
 	}
 
 	return;
@@ -218,7 +268,6 @@ void EventQueue::printLatency() {
 	std::cout << "--------------------------------------------------------------------------------" << std::endl;
 	std::cout << "Mean Latency: " << latencyStats.getMean() << std::endl;
 	std::cout << "Minimum Latency:" << *std::min_element(latency.begin(), latency.end()) << std::endl;
-	if ((*std::min_element(latency.begin(), latency.end())) <= 0.0) { std::cout << " (Some tasks did not respond) " << std::endl;}
 	std::cout << "Maximum Latency: " << *std::max_element(latency.begin(), latency.end()) << std::endl;
 	std::cout << "Latency Std. Dev.: " << latencyStats.getStandardDeviation() << std::endl;
 	std::cout << "--------------------------------------------------------------------------------" << std::endl;
@@ -241,14 +290,22 @@ void EventQueue::printThroughput() {
 
 void EventQueue::printResponseTimes() {
 
-	CandleStats ResponseStats(taskResponseTimes);
+	auto newEnd = std::remove_if(
+		responses.begin(), 
+		responses.end(), 
+		[](double x) -> bool { return x <= 0; }
+	);
+
+	responses.erase(newEnd, responses.end());
+
+	CandleStats ResponseStats(responses);
 
 	std::cout << "--------------------------------------------------------------------------------" << std::endl;
 	std::cout << "Response Time Statistics:" << std::endl;
 	std::cout << "--------------------------------------------------------------------------------" << std::endl;
 	std::cout << "Mean Response Time: " << ResponseStats.getMean() << std::endl;
-	std::cout << "Minimum Response Time: " << *std::min_element(taskResponseTimes.begin(), taskResponseTimes.end()) << std::endl;
-	std::cout << "Maximum Response Time: " << *std::max_element(taskResponseTimes.begin(), taskResponseTimes.end()) << std::endl;
+	std::cout << "Minimum Response Time: " << *std::min_element(responses.begin(), responses.end()) << std::endl;
+	std::cout << "Maximum Response Time: " << *std::max_element(responses.begin(), responses.end()) << std::endl;
 	std::cout << "Response Time Std. Dev.: " << ResponseStats.getStandardDeviation() << std::endl;
 	std::cout << "--------------------------------------------------------------------------------" << std::endl;
 	std::cout << std::endl << std::endl;
@@ -258,7 +315,7 @@ void EventQueue::printResponseTimes() {
 
 void EventQueue::calculateUtilization() {
 
-	utilization.push_back(resourcesUsed / totalResources);
+	utilization.push_back(std::min(resourcesUsed / totalResources, 1));
 
 	return;
 }
@@ -291,9 +348,7 @@ void EventQueue::printQueue() {
 		std::cout << std::get<0>(e) << "ms" << " - " << 
 			"Task " << std::get<1>(e) << ": "  << 
 			"(Dev: " << std::get<2>(e) << ", Dur: " << std::get<3>(e) << ")" << std::endl;
-	}
-
-	
+	}	
 }
 
 void EventQueue::printStartTimes() {

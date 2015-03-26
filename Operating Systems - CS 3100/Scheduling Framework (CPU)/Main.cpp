@@ -12,9 +12,11 @@
 
 int main() {
 
-	auto numCPUs = 2;
-	auto numIOs = 3;
-	auto contextSwitchCost = 1.0;
+	auto algorithm = 1;
+	auto quantumSize = 20.0;
+	auto numCPUs = 1;
+	auto numIOs = 2;
+	auto contextSwitchCost = 10.0;
 	auto taskMixRate = 0.5;
 	auto taskCreationFrequency = 100.0;
 
@@ -26,9 +28,11 @@ int main() {
 		std::cout << "================================================================================" << std::endl;
 		std::cout << "Welcome to the Scheduling Framework Application. What Would you Like to do?" << std::endl;
 		std::cout << "'R' - Run the Simulation" << std::endl;
+		std::cout << "'A' - Change the algorithm used for CPU scheduling" << std::endl;
 		std::cout << "'C' - Change the number of CPU's on the device" << std::endl;
 		std::cout << "'I' - Change the number of IO Devices on the device" << std::endl;
 		std::cout << "'S' - Change the cost of a context switch" << std::endl;
+		std::cout << "'K' - Change the quantum size of the round-robin ready queue" << std::endl;
 		std::cout << "'M' - Change the amount of CPU bound vs IO bound tasks" << std::endl;
 		std::cout << "'F' - Change the task creation frequency" << std::endl;
 		std::cout << "'Q' - Quit" << std::endl;
@@ -42,6 +46,19 @@ int main() {
 		switch(choice) {
 			case 'R':
 			case 'r':
+				break;
+
+			case 'A':
+			case 'a':
+				std::cout << "--------------------------------------------------------------------------------" << std::endl;
+				std::cout << "'1' - FIFO Ready Queue" << std::endl;
+				std::cout << "'2' - Round Robin Ready Queue" << std::endl;
+				std::cout << "'3' - Shortest Job First Ready Queue" << std::endl;
+				std::cout << "'4' - Approximate Shortest Job First Ready Queue" << std::endl;
+				std::cout << "--------------------------------------------------------------------------------" << std::endl;
+				std::cout << "Please choose the new algorithm [1, 2, 3, 4]: " << std::endl;
+				std::cin >> algorithm;
+				continue;
 				break;
 
 			case 'C':
@@ -60,10 +77,18 @@ int main() {
 
 			case 'S':
 			case 's':		
-				std::cout << "Please input the new cost of a context switch [0.0 - 9999.0: " << std::endl;
+				std::cout << "Please input the new cost of a context switch [0.0 - 9999.0]: " << std::endl;
 				std::cin >> contextSwitchCost;
 				continue;
 				break;	
+
+			case 'K':
+			case 'k':
+				std::cout << "Please input the new quantum size for the round-robin ready queue [0.0 - 9999.0]:" << std::endl;
+				std::cin >> quantumSize;
+				continue;
+				break;
+
 
 			case 'M':
 			case 'm':
@@ -98,7 +123,9 @@ int main() {
 			taskMixRate,
 			contextSwitchCost,
 			numCPUs,
-			numIOs);
+			numIOs,
+			algorithm,
+			quantumSize);
 
 		// myEventQueue.printStartTimes();
 		// myEventQueue.printFinishTimes();

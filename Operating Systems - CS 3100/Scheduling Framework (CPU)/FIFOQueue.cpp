@@ -10,6 +10,7 @@ void FIFOQueue::push(step item) {
 }
 
 step FIFOQueue::pop() {
+	// Return Dummy Event
 	if (rqueue.empty()) { return std::make_tuple(0.0, -1, -1, 0.0); }
 
 	auto item = rqueue.front();

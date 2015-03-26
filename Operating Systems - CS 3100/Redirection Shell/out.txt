@@ -1,0 +1,12 @@
+total 1808
+drwxr-xr-x  11 candlemancer  staff     374 Mar 24 12:28 .
+drwxr-xr-x  11 candlemancer  staff     374 Mar 12 10:23 ..
+-rw-r--r--@  1 candlemancer  staff    6148 Feb  9 19:06 .DS_Store
+-rw-r--r--   1 candlemancer  staff    4379 Feb  9 19:24 A01236750 - HW5.zip
+-rw-rw-r--   1 candlemancer  staff     140 Jan 31 23:06 Main.cpp
+-rw-rw-r--   1 candlemancer  staff     848 Feb  9 19:05 Readme.txt
+-rwxr-xr-x   1 candlemancer  staff  882900 Mar 24 12:28 RedirectionShell
+-rw-rw-r--   1 candlemancer  staff    7388 Feb  9 19:20 Shell.cpp
+-rw-rw-r--   1 candlemancer  staff     959 Feb  8 21:46 Shell.hpp
+-rw-rw-r--   1 candlemancer  staff     434 Feb  9 19:07 makefile
+-rw-r--r--   1 candlemancer  staff       0 Mar 24 12:28 out.txt
