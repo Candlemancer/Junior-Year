@@ -14,16 +14,20 @@
 #include "RoundRobinQueue.hpp"
 #include "ShortestJobQueue.hpp"
 #include "ApproxShortestQueue.hpp"
+#include "FIFOTable.hpp"
 
 EventQueue::EventQueue(
 	double frequency, 
 	double mixRate, 
 	double contextCost, 
+	double pgFaultCost,
 	int numCPUs, 
 	int numIOs,
+	int numPages,
 	int algorithm,
 	double quantumSize) :
 	contextSwitchCost(contextCost),
+	pageFaultCost(pgFaultCost),
 	resourcesUsed(0),
 	totalResources(numCPUs/* + numIOs*/),
 	device(numCPUs, numIOs),
@@ -34,8 +38,9 @@ EventQueue::EventQueue(
 
 	// Create a Terminate Event
 	events.push(Event(Event::END_PROCESS, runningTime + 1.0));
-	rqueue = std::unique_ptr<ReadyQueue>();
 
+	// Create the Ready Queue
+	rqueue = std::unique_ptr<ReadyQueue>();
 	switch (algorithm) {
 		case 1:
 			rqueue = std::unique_ptr<ReadyQueue>(new FIFOQueue());
@@ -53,9 +58,12 @@ EventQueue::EventQueue(
 			rqueue = std::unique_ptr<ReadyQueue>(new FIFOQueue());
 	}
 
+	// Create the Page Table
+	pgTable = std::unique_ptr<PageTable>(new FIFOTable(numPages));
 
 	update();
-	
+
+	return;	
 }
 
 void EventQueue::generateTasks(double frequency, double mixRate, int numIOs) {
@@ -152,6 +160,11 @@ void EventQueue::update() {
 			completeStep(ev);
 		}
 
+		// Memory Tasks
+		if (ev.m_taskType == Event::MEM_FETCH) {
+			// printEvent(ev);
+			fetchMemory(ev);
+		}
 
 
 	}
@@ -237,6 +250,24 @@ void EventQueue::popIOQueue(int id, double currentTime) {
 	return;
 }
 
+void EventQueue::fetchMemory(Event item) {
+
+	if (pgTable->fetch(item)) { completeStep(item); return; }
+
+	// Otherwise Page Fault
+	// std::cout << "Page Fault while Accessing page " << item.m_idRequested << " from task " << item.m_taskNumber << std::endl;
+	events.push(
+		Event(
+			Event::MEM_FETCH,
+			item.m_startTime + pageFaultCost,
+			item.m_duration,
+			item.m_taskNumber,
+			item.m_idRequested
+		)
+	);
+	return;
+}
+
 // Gets the next event
 void EventQueue::completeStep(Event item) {
 
@@ -268,7 +299,18 @@ void EventQueue::completeStep(Event item) {
 			)
 		);
 	}
-	else {
+	if (std::get<0>(nextTask) == -2) {
+		events.push(
+			Event(
+				Event::MEM_FETCH,
+				item.m_startTime,
+				0.0,
+				item.m_taskNumber,
+				std::get<1>(nextTask)
+			)
+		);
+	}
+	if (std::get<0>(nextTask) >= 0) {
 		events.push(
 			Event(
 				Event::IO_START,

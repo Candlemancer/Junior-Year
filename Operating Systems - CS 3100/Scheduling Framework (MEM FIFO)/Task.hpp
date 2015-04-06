@@ -23,7 +23,8 @@ public:
 		double meanCPU = 50.0, 
 		double stdDevCPU = 0.0, 
 		double meanIO = 50.0, 
-		double stdDevIO = 0.0);
+		double stdDevIO = 0.0,
+		int maxMemoryPages = 20);
 
 	void printTask();
 	std::tuple<int, double> pop();
@@ -35,6 +36,8 @@ private:
 	bool isIoBound;
 	std::vector<std::tuple<int, double>> taskList;
 	int const CPU = -1;
+	int const MEM = -2;
+	int numMemoryPages;
 
 };
 

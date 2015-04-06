@@ -9,8 +9,6 @@
 #include <tuple>
 
 #include "Event.hpp"
-// Forward Declarations
-// class Event();
 
 // typedef std::tuple<double, int, int, double> step;
 

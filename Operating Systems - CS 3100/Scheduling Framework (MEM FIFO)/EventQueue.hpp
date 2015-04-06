@@ -11,9 +11,10 @@
 #include <string>
 #include <memory>
 #include "Task.hpp"
-#include "Device.hpp"
-#include "ReadyQueue.hpp"
 #include "Event.hpp"
+#include "Device.hpp"
+#include "PageTable.hpp"
+#include "ReadyQueue.hpp"
 
 // <Event Time, Task, Device, Running Time>
 // typedef std::tuple<double, int, int, double> step;
@@ -25,8 +26,10 @@ public:
 		double frequency, 
 		double mixRate, 
 		double contextCost, 
+		double pgFaultCost,
 		int numCPUs, 
 		int numIOs, 
+		int numPages,
 		int algorithm,
 		double quantumSize
 	);
@@ -38,6 +41,7 @@ public:
 	void popReadyQueue(double currentTime);
 	void pushIOQueue(Event item);
 	void popIOQueue(int id, double currentTime);
+	void fetchMemory(Event item);
 	void completeStep(Event item);
 
 	// Statistics
@@ -59,6 +63,7 @@ public:
 private:
 	// Member Data
 	double contextSwitchCost;
+	double pageFaultCost;
 	double const runningTime = 10000.0;
 	int resourcesUsed;
 	int totalResources;
@@ -67,6 +72,7 @@ private:
 	std::vector<Task> allTasks;
 	Device device;
 	std::unique_ptr<ReadyQueue> rqueue;
+	std::unique_ptr<PageTable> pgTable;
 
 	// Raw Time Data
 	std::vector<double> taskStartTimes;

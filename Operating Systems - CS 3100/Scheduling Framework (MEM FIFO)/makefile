@@ -6,7 +6,7 @@
 CC=g++
 CFLAGS=-c -std=c++11 -Wall -Wextra -Wpedantic
 LDFLAGS=
-SOURCES=Main.cpp Device.cpp EventQueue.cpp FIFOQueue.cpp Task.cpp
+SOURCES=ApproxShortestQueue.cpp Device.cpp EventQueue.cpp FIFOQueue.cpp FIFOTable.cpp Main.cpp RoundRobinQueue.cpp ShortestJobQueue.cpp Task.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=SchedulingFramework
 

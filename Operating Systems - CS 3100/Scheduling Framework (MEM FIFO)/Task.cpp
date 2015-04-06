@@ -33,7 +33,8 @@ void Task::generate(
 	double meanCPU, 
 	double stdDevCPU, 
 	double meanIO, 
-	double stdDevIO) {
+	double stdDevIO,
+	int maxMemoryPages) {
 	
 	// Setup the Random Generator
 	std::default_random_engine generator;
@@ -64,19 +65,34 @@ void Task::generate(
 	std::normal_distribution<double> distCPU (meanCPU, stdDevCPU);
 	std::normal_distribution<double> distIO (meanIO, stdDevIO);
 	std::uniform_int_distribution<int> distDevice (0, numIOs - 1);
+	std::uniform_int_distribution<int> distMemory (1, maxMemoryPages);
+	std::uniform_int_distribution<int> memVsIO (0, 1);
 	auto timeCPU = std::bind(distCPU, generator);
 	auto timeIO = std::bind(distIO, generator);
 	auto destIO = std::bind(distDevice, generator);
+	auto pageMem = std::bind(distMemory, generator);
 
 	// Create number of tasks
 	std::uniform_int_distribution<int> numTasks (1, 20);
+	
+	// Create Memory Pages
+	numMemoryPages = pageMem();
 
 	// Create First CPU Task
 	taskList.push_back(std::make_tuple(CPU, fabs(timeCPU())));
 
 	for (int i = 0; i < numTasks(generator); ++i) {
-		// Create IO Burst
-		taskList.push_back(std::make_tuple(destIO(), fabs(timeIO())));
+
+
+		if (memVsIO(generator) == 1) {
+			// Create Memory Burst
+			taskList.push_back(std::make_tuple(MEM, pageMem()));
+
+		}
+		else {
+			// Create IO Burst
+			taskList.push_back(std::make_tuple(destIO(), fabs(timeIO())));
+		}
 
 		// Create CPU Task
 		taskList.push_back(std::make_tuple(CPU, fabs(timeCPU())));		

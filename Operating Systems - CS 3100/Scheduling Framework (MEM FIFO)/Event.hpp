@@ -32,6 +32,7 @@ public:
 		IO_START,
 		IO_STOP,
 		MEM_FETCH,
+		PAGE_FAULT,
 		END_PROCESS
 	};
 
@@ -50,6 +51,15 @@ inline bool operator< (const Event& lhs, const Event& rhs){
 inline bool operator> (const Event& lhs, const Event& rhs){return rhs < lhs;}
 inline bool operator<=(const Event& lhs, const Event& rhs){return !(lhs > rhs);}
 inline bool operator>=(const Event& lhs, const Event& rhs){return !(lhs < rhs);}
-
+inline bool operator==(const Event& lhs, const Event& rhs){
+	if (lhs.m_taskType == rhs.m_taskType &&
+		//lhs.m_startTime == rhs.m_startTime &&
+		lhs.m_duration == rhs.m_duration &&
+		lhs.m_taskNumber == rhs.m_taskNumber &&
+		lhs.m_idRequested == rhs.m_idRequested ) {
+		return true;
+	}
+	return false;
+}
 
 #endif
