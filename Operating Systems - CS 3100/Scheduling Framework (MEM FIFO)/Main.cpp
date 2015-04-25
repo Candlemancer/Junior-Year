@@ -92,6 +92,7 @@ int main() {
 			case 'p':
 				std::cout << "Please input the new cost of a page fault [0.0 - 9999.0]: " << std::endl;			
 				std::cin >> pageFaultCost;
+				continue;
 
 			case 'K':
 			case 'k':
