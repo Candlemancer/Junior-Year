@@ -128,12 +128,45 @@ class Matrix :
 		return self.determinant;
 
 	def getEigenvalues(self) :
-		self.trace = sum(self.getPivots());
-		self.getDeterminant();
 
-		print self.trace;
-		print self.determinant;
+		self.getPivots();
+		roots = [ [-1, i] for i in self.pivots ]
+		# print roots
 
+		polynomial = self.combinePolynomials(roots[0], roots[1]);
+		if len(roots) > 2 :
+			for i in range(2, len(roots)) :
+				polynomial = self.combinePolynomials(polynomial, roots[i]);
+
+		# print polynomial
+		derivitave = self.computeDerivative(polynomial);
+		# print derivitave;
+
+		# print NewtonRaphson.newtonRaphsonApproximation(1, polynomial, derivitave);
+
+	def combinePolynomials(self, poly1, poly2) :
+		
+		orderPoly1 = len(poly1) - 1;
+		orderPoly2 = len(poly2) - 1;
+		toReturn = [0] * (len(poly1) + len(poly2) - 1);
+
+		for i in range(0, len(poly1)) :
+			for j in range(0, len(poly2)) :
+				toReturn[i + j] += poly1[i] * poly2[j];
+
+		return toReturn;
+
+	def computeDerivative(self, poly) :
+
+		derivative = [];
+		order = len(poly) - 1;
+
+		for i in poly :
+			derivative.append(order * i);
+			order -= 1;
+		derivative.pop();
+
+		return derivative;
 
 
 	def simplifyDiagonal(self) :
@@ -205,6 +238,26 @@ class Matrix :
 	def __radd__(self, other) :
 		return self.__add__(other);
 
+	def __sub__(self, other) :
+
+		# Make sure we're adding two Matrices
+		if not isinstance(other, Matrix) :
+			raise TypeError('unsupported operand types for +');
+
+		# And that they're the same size
+		assert ((self.numCols == other.numCols) and (self.numRows == other.numRows)), 'Matrix.__add__: operand self has different dimension than operand other';
+
+		toReturn = [];
+		for i in xrange(0, self.numRows):
+
+			for j in xrange(0, self.numCols):
+				toReturn.append(self.matrix[i][j] - other.matrix[i][j]);
+
+		return Matrix(self.numRows, self.numCols, toReturn);
+
+	def __rsub__(self, other) :
+		return self.__sub__(other);
+
 	def __str__(self) :
 		return "[" + ', \n '.join(str(x) for x in self.matrix) + "]";
 
@@ -222,17 +275,36 @@ class Matrix :
 
 		if isinstance(other, Matrix) :
 
-			assert ((self.numCols == other.numRows) and (self.numRows == other.numCols)), 'Matrix.__mul__: operand self has different dimension than operand right transpose';
+			assert (self.numCols == other.numRows), 'Matrix.__mul__: operand self has different dimension than operand right transpose';
 
-			toReturn = [];
+			tempRow = [0] * other.numCols;
+			toReturn = [tempRow] * self.numRows;
+
+			# print toReturn
+			# print self.matrix, other.matrix
 
 			for i in xrange(0, self.numRows):
 
-				for j in xrange(0, self.numCols):
-					toReturn.append(self.matrix[i][j] * other.matrix[j][i]);
+				for j in xrange(0, other.numCols):
 
-			return Matrix(self.numRows, self.numCols, toReturn);
+					tempSum = 0;
 
+					for k in range(0, len(self.matrix[i])) :
+
+						# print k, ": ", self.matrix[i], ", ", other.transpose().matrix[j]
+						# print self.matrix[i][k], " * ", other.transpose().matrix[j][k]
+						# print "------------"
+
+						tempSum =+ (self.matrix[i][k] * other.transpose().matrix[j][k]);
+
+					toReturn[i][j] = tempSum;
+
+			toReturn = itertools.chain(*toReturn)
+			return Matrix(self.numRows, other.numCols, list(toReturn));
+
+	def __rmul__(self, other) :
+		return self.__mul__(other);
+		
 # //////////////////////////////////////////////////////////////////////////////////////////////// #
 
 a = Matrix(2, 2, [1, 2, 3, 4]);
@@ -250,7 +322,7 @@ d = a + c;
 # print b.transpose();
 
 e = Matrix(2, 3, [2, 2, 3, 4, 5, 6]);
-# f = Matrix(3, 2, [1, 8, 7, 6, 5, 4]);
+f = Matrix(3, 2, [1, 8, 7, 6, 5, 4]);
 # g = e.transpose();
 
 # print e;
@@ -314,7 +386,7 @@ l = Matrix(3, 3, [2, 0, 1, 0, 2, 0, 1, 0, 2]);
 # print l;
 # print l.getEigenvalues();
 m = Matrix(2, 2, [2, 1, 1, 2]);
-# print m;
+print m;
 # print m.rref();
 # print m.diagonalize().simplifyDiagonal();
 # print m.getEigenvalues();
@@ -322,5 +394,25 @@ m = Matrix(2, 2, [2, 1, 1, 2]);
 n = Matrix(2, 2, [1, 2, 2, 4]);
 print n;
 # print n.diagonalize();
-print n.getEigenvalues();
+# print n.combinePolynomials([1, 1], [1, -1])
+# print n.combinePolynomials([1, 2, 1], [1, 2]);
+# print n.combinePolynomials([1, 2], [1, 2, 1]);
+# print n.getEigenvalues();
 
+
+# print m - n;
+# print m + n;
+# print m * n;
+# print m / n;
+
+o = Matrix(1, 3, [1, 2, 3]);
+p = Matrix(3, 1, [2, 2, 2]);
+
+# print o;
+# print p;
+
+# print o * p;
+# print p * o;
+
+print m * n;
+print f * e;
