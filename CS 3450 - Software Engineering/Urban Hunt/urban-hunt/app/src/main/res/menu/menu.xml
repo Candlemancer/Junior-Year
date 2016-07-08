@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fryarludwig.urbanhunt.Controllers.MainMenuActivity">
+    <item android:id="@+id/OptionMainMenu" android:title="Main Menu"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/OptionJoinGame" android:title="Join a Game"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/OptionMakeGame" android:title="Make a New Game"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

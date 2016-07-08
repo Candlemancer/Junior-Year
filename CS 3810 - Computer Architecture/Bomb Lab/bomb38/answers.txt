@@ -1,0 +1,7 @@
+I am the mayor. I can do anything I want.
+19 20 22 25 29 34 42
+4 m 888
+352 4 DrEvil
+5 115
+6 1 4 3 5 2
+
